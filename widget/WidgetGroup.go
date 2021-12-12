@@ -6,6 +6,7 @@ import (
 )
 
 type WidgetGroup struct {
+	IWidget
 	widgets []IWidget
 	active  IWidget
 }
@@ -23,23 +24,15 @@ func (self *WidgetGroup) RegisterWidget(widget IWidget) {
 }
 
 func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+	if evt.EvType == event.EventTypeKey {
+		if evt.EvKey == goncurses.KEY_RETURN {
 
-	//        match evt {
-	//            Event::Key(
-	//                Key::Char(ch)
-	//            ) => {
-	//                trace!("debug: key: char = {:?}", ch);
-	//                for w in &mut self.widgets {
-	//                    w.input(ch);
-	//                }
-	//            },
-	//            _ => {},
-	//        }
-
+		}
+	}
 }
 
 func (self *WidgetGroup) Render(stdscr *goncurses.Window, area *Rect) {
-	//        for w in &mut self.widgets {
-	//            w.render(area);
-	//        }
+	for _, w := range self.widgets {
+		w.Render(stdscr, area)
+	}
 }

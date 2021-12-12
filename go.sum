@@ -1,2 +1,4 @@
+github.com/famz/SetLocale v0.0.0-20140414113655-0457ad1065dd h1:AwrM2Zy3xXTjdGwwxxzhFNBME1DtXuW+/ThEnGmW4M4=
+github.com/famz/SetLocale v0.0.0-20140414113655-0457ad1065dd/go.mod h1:GNjuOaiKbnzrSsZeuQqVD+sBwmEQ7pPhnZS4zfUbmPk=
 github.com/gbin/goncurses v0.0.0-20141106211150-34d9399fcea5 h1:1zsAMqM0C3Yjv9KWjh/68s/07bYeev6c0D4FwHkl13w=
 github.com/gbin/goncurses v0.0.0-20141106211150-34d9399fcea5/go.mod h1:dmRjyC3ZOQQ4EXWMOIAQi0TLaJPcg61LFsJ9mvhSGRE=
