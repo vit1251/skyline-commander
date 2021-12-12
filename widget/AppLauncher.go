@@ -1,5 +1,11 @@
 package widget
 
+import (
+	"github.com/gbin/goncurses"
+	"log"
+	"time"
+)
+
 type AppLauncher struct {
 //    state: T,
 //    view: WidgetGroup,
@@ -38,36 +44,26 @@ func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
 //        };
 //    }
 
-//    pub fn launch(&mut self) {
-//
-//        let stdin = stdin();
-//        let mut stdout = MouseTerminal::from(stdout().into_raw_mode().unwrap());
-//
-//        let mut events = stdin.events();
-//
-//        self.running = true;
-//        while self.running {
-//
-//            self.reset();
-//
-//            self.render();
-//
-//            print!("{}", termion::cursor::Hide);
-//
-//            stdout.flush().unwrap();
-//
-//            let evt = events.next(); // Option<Result<...>>
-//            let evt = evt.unwrap();  // Result<Event, Error>
-//            let evt = evt.unwrap();  // Event
-//
-//            self.process_event(evt);
-//
-//        }
-//
-//        /* Application complete */
-//        self.reset();
-//
-//    }
+func (self *AppLauncher) Run() {
+
+	stdscr, err1 := goncurses.Init()
+	if err1 != nil {
+		log.Fatal("init:", err1)
+	}
+	defer goncurses.End()
+
+	err2 := goncurses.StartColor()
+	if err2 != nil {
+		log.Fatal("StartColor", err2)
+	}
+
+	stdscr.Print("Press enter to continue...")
+	stdscr.Refresh()
+
+	time.Sleep(1 * time.Minute)
+}
+
+
 //
 //    fn reset(&self) {
 //        print!("{}{}{}{}",

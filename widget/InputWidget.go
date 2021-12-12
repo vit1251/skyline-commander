@@ -1,3 +1,4 @@
+package widget
 
 type InputWidget struct {
 //    color: &'a dyn termion::color::Color,

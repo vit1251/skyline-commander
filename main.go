@@ -1,27 +1,22 @@
 package main
 
 import (
-	"github.com/gbin/goncurses"
-	"log"
-	"time"
+	"github.com/vit1251/skyline-commander/widget"
 )
 
 func main() {
 
-	stdscr, err1 := goncurses.Init()
-	if err1 != nil {
-		log.Fatal("init:", err1)
-	}
-	defer goncurses.End()
+	/* Create main Scoreboard */
+	mainBoard := ScoreBoardBuilder().
+		WithWidgetGroup(mainWidgetGroup).
+		WithButtonBar(mainBar).
+		WithMainMenu(mainMenu).
+		Build()
 
-	err2 := goncurses.StartColor()
-	if err2 != nil {
-		log.Fatal("StartColor", err2)
-	}
+	/* Create application with single scoreboard */
+	app := widget.AppLauncherWithScoreboard(mainBoard)
 
-	stdscr.Print("Press enter to continue...")
-	stdscr.Refresh()
-
-	time.Sleep(1 * time.Minute)
+	/* Run application */
+	arr.Run()
 
 }

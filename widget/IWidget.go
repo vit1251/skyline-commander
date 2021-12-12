@@ -1,3 +1,4 @@
+package widget
 
 type Rect struct {
 	x		uint
