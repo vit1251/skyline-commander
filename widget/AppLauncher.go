@@ -3,33 +3,31 @@ package widget
 import (
 	"github.com/gbin/goncurses"
 	"log"
-	"time"
 )
 
 type AppLauncher struct {
-//    state: T,
-//    view: WidgetGroup,
-//    running: bool,
+	running    bool
+	scoreBoard *Scoreboard
+	stdscr     *goncurses.Window
 }
 
 func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
-	al := &AppLauncher {
-//            view: view,
-//            state: state,
-//            running: false,
+	al := &AppLauncher{
+		running:    false,
+		scoreBoard: sb,
 	}
 	return al
 }
 
-//    fn size(&self) -> std::io::Result<Rect> {
-//        let terminal = termion::terminal_size()?;
-//        Ok(Rect::new(0, 0, terminal.0, terminal.1))
-//    }
+func (self *AppLauncher) size() *Rect {
+	y, x := self.stdscr.MaxYX()
+	return NewRect(0, 0, uint(x), uint(y))
+}
 
-//    fn render(&mut self) {
-//        let area = self.size().unwrap();
-//        self.view.render(&area);
-//    }
+func (self *AppLauncher) render() {
+	area := self.size()
+	self.scoreBoard.render(self.stdscr, area)
+}
 
 //    fn process_event(&mut self, evt: Event) {
 //        match evt {
@@ -48,21 +46,49 @@ func (self *AppLauncher) Run() {
 
 	stdscr, err1 := goncurses.Init()
 	if err1 != nil {
-		log.Fatal("init:", err1)
+		log.Fatal("fail on Init", err1)
 	}
+	self.stdscr = stdscr
 	defer goncurses.End()
 
-	err2 := goncurses.StartColor()
+	goncurses.Raw(true)
+	goncurses.Echo(false)
+	err2 := goncurses.Cursor(0)
 	if err2 != nil {
-		log.Fatal("StartColor", err2)
+		log.Fatal("fail on Cursor", err2)
+	}
+	err3 := stdscr.Keypad(true)
+	if err3 != nil {
+		log.Fatal("fail on Keypad", err3)
+	}
+
+	stdscr.Timeout(100)
+
+	err4 := goncurses.StartColor()
+	if err4 != nil {
+		log.Fatal("fail on StartColor", err4)
 	}
 
 	stdscr.Print("Press enter to continue...")
 	stdscr.Refresh()
 
-	time.Sleep(1 * time.Minute)
-}
+	self.running = true
+	for self.running {
 
+		/* Render scoreboard */
+		self.render()
+
+		/* Process input */
+		key := stdscr.GetChar()
+		switch key {
+		case goncurses.KEY_F10:
+			log.Printf("Press F10 key\n")
+			self.running = false
+		}
+
+	}
+
+}
 
 //
 //    fn reset(&self) {

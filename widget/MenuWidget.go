@@ -3,7 +3,7 @@ package widget
 type MenuWidget struct {
 }
 
-func NewMenuWidget() {
-	mw := MenuWidget{}
+func NewMenuWidget() *MenuWidget {
+	mw := &MenuWidget{}
 	return mw
 }

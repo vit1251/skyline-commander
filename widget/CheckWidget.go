@@ -4,7 +4,6 @@ type CheckWidget struct {
 }
 
 func NewCheckWidget() *CheckWidget {
-	cw := CheckWidget{
-	}
+	cw := &CheckWidget{}
 	return cw
 }

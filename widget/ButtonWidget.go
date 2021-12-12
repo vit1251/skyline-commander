@@ -1,50 +1,51 @@
 package widget
 
 type ButtonWidget struct {
-//    color: &'a dyn termion::color::Color,
-//    x: u16,
-//    y: u16,
-//    title: String,
-//    callback: Option<Box<dyn Fn()>>,
-//    focused: bool,
+	//    color: &'a dyn termion::color::Color,
+	//    x: u16,
+	//    y: u16,
+	//    title: String,
+	//    callback: Option<Box<dyn Fn()>>,
+	//    focused: bool,
 }
 
 func NewButtonWidget() *ButtonWidget {
-	bw := ButtonWidget{
-//            color: &Cyan,
-//            x: 0,
-//            y: 0,
-//            callback: None,
-//            title: String::new(),
-//            focused: false,
+	bw := &ButtonWidget{
+		//            color: &Cyan,
+		//            x: 0,
+		//            y: 0,
+		//            callback: None,
+		//            title: String::new(),
+		//            focused: false,
 	}
 	return bw
 }
 
-func ProcessInput()
-//    fn input(&mut self, ch: char) {
-//        match ch {
-//            '\n' => {
-//                self.invoke();
-//            },
-//            _ => {
-//            }
-//        };
-//    }
+func ProcessInput() {
+
+	//        match ch {
+	//            '\n' => {
+	//                self.invoke();
+	//            },
+	//            _ => {
+	//            }
+	//        };
+
+}
 
 func (self *ButtonWidget) Render() {
 
-//        // Step 1. Select color
-//        if self.focused {
-//            print!("{}{}", termion::color::Fg(Black), termion::color::Bg(self.color));
-///        } else {
-//            print!("{}{}", termion::color::Fg(Black), termion::color::Bg(White));
-//        }
-//        // Step 2. Set position
-//        print!("{}", termion::cursor::Goto(self.x, self.y));
-//        // Step 3. Draw button
-//        let out = format!("[ {} ]", self.title);
-//        print!("{}", out);
+	//        // Step 1. Select color
+	//        if self.focused {
+	//            print!("{}{}", termion::color::Fg(Black), termion::color::Bg(self.color));
+	///        } else {
+	//            print!("{}{}", termion::color::Fg(Black), termion::color::Bg(White));
+	//        }
+	//        // Step 2. Set position
+	//        print!("{}", termion::cursor::Goto(self.x, self.y));
+	//        // Step 3. Draw button
+	//        let out = format!("[ {} ]", self.title);
+	//        print!("{}", out);
 
 }
 

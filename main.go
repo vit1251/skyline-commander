@@ -6,8 +6,14 @@ import (
 
 func main() {
 
+	mainWidgetGroup := widget.NewWidgetGroup()
+
+	mainBar := widget.NewButtonBarWidget()
+
+	mainMenu := widget.NewMenuWidget()
+
 	/* Create main Scoreboard */
-	mainBoard := ScoreBoardBuilder().
+	mainBoard := widget.NewScoreBoardBuilder().
 		WithWidgetGroup(mainWidgetGroup).
 		WithButtonBar(mainBar).
 		WithMainMenu(mainMenu).
@@ -17,6 +23,6 @@ func main() {
 	app := widget.AppLauncherWithScoreboard(mainBoard)
 
 	/* Run application */
-	arr.Run()
+	app.Run()
 
 }
