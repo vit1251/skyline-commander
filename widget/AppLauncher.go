@@ -83,6 +83,7 @@ func (self *AppLauncher) makeDefaultSkin() *skin.Skin {
 
 	s := skin.NewSkin()
 
+	/* Core */
 	s.Register("core", "_default_", self.pTerm.InitColor("lightgray", "blue"))
 	s.Register("core", "selected", self.pTerm.InitColor("black", "cyan"))
 	s.Register("core", "marked", self.pTerm.InitColor("yellow", "blue"))
@@ -90,6 +91,10 @@ func (self *AppLauncher) makeDefaultSkin() *skin.Skin {
 	s.Register("core", "gauge", self.pTerm.InitColor("white", "black"))
 	s.Register("core", "input", self.pTerm.InitColor("black", "cyan"))
 	s.Register("core", "reverse", self.pTerm.InitColor("black", "lightgray"))
+
+	/* Button bar */
+	s.Register("buttonbar", "hotkey", self.pTerm.InitColor("white", "black"))
+	s.Register("buttonbar", "button", self.pTerm.InitColor("black", "cyan"))
 
 	return s
 }

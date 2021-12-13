@@ -118,9 +118,10 @@ func (self *ButtonBarWidget) drawKey(pTerm *tty.PTerm, area *Rect, skin *skin.Sk
 	for utf8.RuneCountInString(keyName) < 2 {
 		keyName = fmt.Sprintf(" %s", keyName)
 	}
-	pTerm.ColorOn(skin.GetColor("core", "mark"))
+	hotkeySkinColorIndex := skin.GetColor("buttonbar", "hotkey")
+	pTerm.ColorOn(hotkeySkinColorIndex)
 	pTerm.Print(keyName)
-	pTerm.ColorOff(skin.GetColor("core", "mark"))
+	pTerm.ColorOff(hotkeySkinColorIndex)
 
 	/* Step 2. Draw key summary */
 	width := self.getButtonWidth(key)
@@ -136,9 +137,10 @@ func (self *ButtonBarWidget) drawKey(pTerm *tty.PTerm, area *Rect, skin *skin.Sk
 		keySummary = fmt.Sprintf("%s ", keySummary)
 	}
 	// Draw
-	pTerm.ColorOn(skin.GetColor("core", "reverse"))
+	buttonSkinColorIndex := skin.GetColor("buttonbar", "button")
+	pTerm.ColorOn(buttonSkinColorIndex)
 	pTerm.Print(keySummary)
-	pTerm.ColorOff(skin.GetColor("core", "reverse"))
+	pTerm.ColorOff(buttonSkinColorIndex)
 
 	/* Debug message */
 	log.Printf("Render: key = %d summary = %q", key, keySummary)
