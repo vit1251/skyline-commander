@@ -1,6 +1,9 @@
 package widget
 
-import "github.com/gbin/goncurses"
+import (
+	"github.com/vit1251/skyline-commander/skin"
+	"github.com/vit1251/skyline-commander/tty"
+)
 
 type Scoreboard struct {
 	menu      *MenuWidget
@@ -8,11 +11,11 @@ type Scoreboard struct {
 	groups    []*WidgetGroup
 }
 
-func (self *Scoreboard) render(stdscr *goncurses.Window, area *Rect) {
+func (self *Scoreboard) render(pTerm *tty.PTerm, area *Rect, skin *skin.Skin) {
 
 	/* Step 0. Render widget groups */
 	for _, group := range self.groups {
-		group.Render(stdscr, area)
+		group.Render(pTerm, area)
 	}
 
 	/* Step 1. Render menu */
@@ -22,7 +25,7 @@ func (self *Scoreboard) render(stdscr *goncurses.Window, area *Rect) {
 
 	/* Step 2. Render button bar */
 	if self.buttonBer != nil {
-		self.buttonBer.Render(stdscr, area)
+		self.buttonBer.Render(pTerm, area, skin)
 	}
 
 }

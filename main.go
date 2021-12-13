@@ -29,7 +29,6 @@ func createPanelBoard() *widget.Scoreboard {
 	mainBar.SetLabel(2, "Menu")
 	mainBar.SetLabel(3, "View")
 	mainBar.SetLabel(4, "Edit")
-	mainBar.SetLabel(4, "Редактировать")
 	mainBar.SetLabel(5, "Copy")
 	mainBar.SetLabel(6, "Move")
 	mainBar.SetLabel(7, "MkDir")

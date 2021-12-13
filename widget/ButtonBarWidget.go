@@ -2,10 +2,12 @@ package widget
 
 import (
 	"fmt"
-	"github.com/gbin/goncurses"
+	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/strutil"
-	"github.com/vit1251/skyline-commander/widget/event"
+	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
+	"unicode/utf8"
 )
 
 const (
@@ -52,7 +54,9 @@ func (self *ButtonBarWidget) SetLabel(key uint, label string) {
 }
 
 func (self *ButtonBarWidget) initButtonPositions(area *Rect) {
+
 	log.Printf("initButtonPositions: area = %v", area)
+
 	var pos uint = 0
 	var minWeight uint = BUTTONBAR_LABELS_NUM * 7
 	if area.width < minWeight {
@@ -108,48 +112,51 @@ func (self *ButtonBarWidget) getButtonWidth(key uint) uint {
 func (self *ButtonBarWidget) ProcessEvent(evt *event.Event) {
 }
 
-func (self *ButtonBarWidget) drawKey(stdscr *goncurses.Window, area *Rect, key uint) {
+func (self *ButtonBarWidget) drawKey(pTerm *tty.PTerm, area *Rect, skin *skin.Skin, key uint) {
 	/* Step 1. Draw key name */
 	keyName := fmt.Sprintf("%d", key)
-	for len(keyName) < 2 {
+	for utf8.RuneCountInString(keyName) < 2 {
 		keyName = fmt.Sprintf(" %s", keyName)
 	}
-	//	stdscr.Color() //            print!("{}{}", termion::color::Fg(White), termion::color::Bg(Black));
-	stdscr.Print(keyName)
+	pTerm.ColorOn(skin.GetColor("core", "mark"))
+	pTerm.Print(keyName)
+	pTerm.ColorOff(skin.GetColor("core", "mark"))
 
 	/* Step 2. Draw key summary */
 	width := self.getButtonWidth(key)
-	summaryWidth := width - 2
+	var summaryWidth int = int(width) - 2
 	keyLabel := self.getLabel(key)
 	keySummary := fmt.Sprintf("%s", keyLabel.text)
 	// Shrink
-	if len(keySummary) > int(summaryWidth) {
-		keySummary = strutil.FitToTerm(keySummary, summaryWidth, strutil.TextAlignLeft, false)
+	if utf8.RuneCountInString(keySummary) > summaryWidth {
+		keySummary = strutil.FitToTerm(keySummary, uint(summaryWidth), strutil.TextAlignLeft, false)
 	}
 	// Padding
-	for len(keySummary) < int(summaryWidth) {
+	for utf8.RuneCountInString(keySummary) < summaryWidth {
 		keySummary = fmt.Sprintf("%s ", keySummary)
 	}
 	// Draw
-	//            print!("{}{}", termion::color::Fg(Black), termion::color::Bg(Cyan));
-	stdscr.Print(keySummary)
+	pTerm.ColorOn(skin.GetColor("core", "reverse"))
+	pTerm.Print(keySummary)
+	pTerm.ColorOff(skin.GetColor("core", "reverse"))
 
 	/* Debug message */
-	log.Printf("Render: key = %d summary = %s", key, keySummary)
+	log.Printf("Render: key = %d summary = %q", key, keySummary)
 
 }
 
-func (self *ButtonBarWidget) Render(stdscr *goncurses.Window, area *Rect) {
+func (self *ButtonBarWidget) Render(pTerm *tty.PTerm, area *Rect, skin *skin.Skin) {
 
 	/* Step 1. Initialize button positions */
 	self.initButtonPositions(area)
+	self.dumpButtonPositions()
 
 	/* Step 0. Detect bottom position */
-	stdscr.Move(int(area.height)-1, 1)
+	pTerm.Move(int(area.height)-1, 0)
 
 	/* Step 1. Draw bar */
 	for _, key := range []uint{1, 2, 3, 4, 5, 6, 7, 8, 9, 10} {
-		self.drawKey(stdscr, area, key)
+		self.drawKey(pTerm, area, skin, key)
 	}
 
 }
@@ -161,4 +168,10 @@ func (self *ButtonBarWidget) getLabel(key uint) *ButtonBarLabel {
 		}
 	}
 	panic("wrong key")
+}
+
+func (self *ButtonBarWidget) dumpButtonPositions() {
+	for index, label := range self.labels {
+		log.Printf("Label: index = %d key = %d summary = %q endCoord = %d", index, label.key, label.text, label.endCoord)
+	}
 }

@@ -2,6 +2,7 @@ package strutil
 
 import (
 	"fmt"
+	"log"
 	"unicode/utf8"
 )
 
@@ -18,6 +19,7 @@ func FitToTerm(src string, width uint, just_mode TextAlignMode, fit bool) string
 	var result string = src
 
 	var inputSize uint = uint(utf8.RuneCountInString(src))
+	log.Printf("FitToTerm: string = %s count = %d", src, inputSize)
 
 	// Input so bigger
 	if inputSize > width {
@@ -34,7 +36,11 @@ func FitToTerm(src string, width uint, just_mode TextAlignMode, fit bool) string
 		var prefix string = ""
 		var suffix string = ""
 
-		for idx, ch := range src {
+		var runes []rune = []rune(src)
+		for idx, ch := range runes {
+
+			log.Printf("FitToTerm: idx = %d ch = %c", idx, ch)
+
 			// Prefix
 			if uint(idx) < prefixPos {
 				prefix = fmt.Sprintf("%s%c", prefix, ch)

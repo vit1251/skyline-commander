@@ -1,17 +1,19 @@
 package widget
 
 import (
-	"github.com/famz/SetLocale"
 	"github.com/gbin/goncurses"
-	"github.com/vit1251/skyline-commander/widget/event"
+	"github.com/vit1251/skyline-commander/skin"
+	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 )
 
 type AppLauncher struct {
 	running     bool
 	scoreBoard  *Scoreboard
-	stdscr      *goncurses.Window
+	pTerm       *tty.PTerm
 	updateReady bool
+	skin        *skin.Skin
 }
 
 func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
@@ -24,17 +26,20 @@ func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
 }
 
 func (self *AppLauncher) size() *Rect {
-	y, x := self.stdscr.MaxYX()
+	y, x := self.pTerm.MaxYX()
 	return NewRect(0, 0, uint(x), uint(y))
 }
 
 func (self *AppLauncher) render() {
+
 	area := self.size()
-	self.scoreBoard.render(self.stdscr, area)
+	self.scoreBoard.render(self.pTerm, area, self.skin)
 }
 
 func (self *AppLauncher) ProcessEvent(evt *event.Event) {
+
 	if evt.EvType == event.EventTypeKey {
+		log.Printf("key = %+v", goncurses.KeyString(goncurses.Key(evt.EvKey)))
 		if evt.EvKey == goncurses.KEY_F10 {
 			self.running = false
 		}
@@ -42,58 +47,55 @@ func (self *AppLauncher) ProcessEvent(evt *event.Event) {
 }
 
 func (self *AppLauncher) reset() {
+	self.pTerm.Erase()
+}
+
+func (self *AppLauncher) makeDefaultSkin() *skin.Skin {
+
+	s := skin.NewSkin()
+
+	s.Register("core", "_default_", self.pTerm.InitColor("lightgray", "blue"))
+	s.Register("core", "selected", self.pTerm.InitColor("black", "cyan"))
+	s.Register("core", "marked", self.pTerm.InitColor("yellow", "blue"))
+	s.Register("core", "markselect", self.pTerm.InitColor("yellow", "cyan"))
+	s.Register("core", "gauge", self.pTerm.InitColor("white", "black"))
+	s.Register("core", "input", self.pTerm.InitColor("black", "cyan"))
+	s.Register("core", "reverse", self.pTerm.InitColor("black", "lightgray"))
+
+	return s
 }
 
 func (self *AppLauncher) Run() {
 
-	/* Disable GetText encoding */
-	SetLocale.SetLocale(SetLocale.LC_ALL, "")
-
-	log.Printf("Initialize ncurses: version = %s", goncurses.CursesVersion())
-
-	stdscr, err1 := goncurses.Init()
+	self.pTerm = tty.NewPTerm()
+	err1 := self.pTerm.Init()
 	if err1 != nil {
-		log.Fatal("fail on Init", err1)
+		panic(err1)
 	}
-	self.stdscr = stdscr
-	defer goncurses.End()
+	defer self.pTerm.End()
 
-	goncurses.CBreak(true)
-	goncurses.Raw(true)
-	goncurses.Echo(false)
-	err2 := goncurses.Cursor(0)
-	if err2 != nil {
-		log.Fatal("fail on Cursor", err2)
-	}
-	err3 := stdscr.Keypad(true)
-	if err3 != nil {
-		log.Fatal("fail on Keypad", err3)
-	}
-
-	stdscr.Timeout(100)
-
-	err4 := goncurses.StartColor()
-	if err4 != nil {
-		log.Fatal("fail on StartColor", err4)
-	}
+	/* Prepare main Skin */
+	self.skin = self.makeDefaultSkin()
+	self.skin.Dump()
 
 	self.running = true
 	for self.running {
 
 		/* Render scoreboard */
 		if self.updateReady {
+			self.pTerm.Touch()
 			self.reset()
 			self.render()
-			stdscr.Refresh()
+			self.pTerm.Refresh()
+			log.Printf("Update: err = %v", goncurses.Update())
 			self.updateReady = false
 		}
 
-		/* Process input */
-		var key goncurses.Key = stdscr.GetChar()
-		if key != 0 {
-			evt := event.NewEventFromKey(int(key))
-			log.Printf("Event: evt = %+v", evt)
-			self.ProcessEvent(evt)
+		/* Process event */
+		select {
+		case evt := <-self.pTerm.C:
+			log.Printf("pTerm: evt = %+v", evt)
+			self.ProcessEvent(&evt)
 			self.updateReady = true
 		}
 

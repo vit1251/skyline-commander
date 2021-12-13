@@ -2,7 +2,8 @@ package widget
 
 import (
 	"github.com/gbin/goncurses"
-	"github.com/vit1251/skyline-commander/widget/event"
+	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/tty/event"
 )
 
 type WidgetGroup struct {
@@ -31,7 +32,7 @@ func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
 	}
 }
 
-func (self *WidgetGroup) Render(stdscr *goncurses.Window, area *Rect) {
+func (self *WidgetGroup) Render(stdscr *tty.PTerm, area *Rect) {
 	for _, w := range self.widgets {
 		w.Render(stdscr, area)
 	}
