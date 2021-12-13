@@ -23,6 +23,12 @@ const (
 func createPanelBoard() *widget.Scoreboard {
 
 	mainWidgetGroup := widget.NewWidgetGroup()
+	mainInput := widget.NewInputWidget()
+	mainInput.SetCallback(func(value string) {
+		log.Printf("Execute shell operation: %q", value)
+	})
+	mainInput.SetPos(10, 0)
+	mainWidgetGroup.RegisterWidget(mainInput)
 
 	mainBar := widget.NewButtonBarWidget()
 	mainBar.SetLabel(1, "Help")
@@ -46,6 +52,30 @@ func createPanelBoard() *widget.Scoreboard {
 		Build()
 
 	return mainBoard
+}
+
+func createTerminalBoard() *widget.Scoreboard {
+	return nil
+}
+
+func createCpuBoard() *widget.Scoreboard {
+	return nil
+}
+
+func createViewBoard() *widget.Scoreboard {
+	return nil
+}
+
+func createEditBoard() *widget.Scoreboard {
+	return nil
+}
+
+func createCopyBoard() *widget.Scoreboard {
+	return nil
+}
+
+func createQuitBoard() *widget.Scoreboard {
+	return nil
 }
 
 func main() {

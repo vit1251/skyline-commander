@@ -3,9 +3,11 @@ package widget
 import (
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/tty/event"
 )
 
 type Scoreboard struct {
+	IScoreboard
 	menu      *MenuWidget
 	buttonBer *ButtonBarWidget
 	groups    []*WidgetGroup
@@ -40,4 +42,18 @@ func (self *Scoreboard) SetWidgetGroup(group *WidgetGroup) {
 
 func (self *Scoreboard) SetButtonBar(bar *ButtonBarWidget) {
 	self.buttonBer = bar
+}
+
+func (self *Scoreboard) ProcessEvent(evt *event.Event) {
+
+	/* Process menu on active */
+	//if self.menu != nil {
+	//	self.menu.ProcessEvent(evt)
+	//}
+
+	/* Process group widget */
+	for _, group := range self.groups {
+		group.ProcessEvent(evt)
+	}
+
 }

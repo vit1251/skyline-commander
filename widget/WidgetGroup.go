@@ -25,11 +25,19 @@ func (self *WidgetGroup) RegisterWidget(widget IWidget) {
 }
 
 func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+
+	/* Process widget group actions */
 	if evt.EvType == event.EventTypeKey {
 		if evt.EvKey == goncurses.KEY_RETURN {
 
 		}
 	}
+
+	/* Process every widget */
+	for _, w := range self.widgets {
+		w.ProcessEvent(evt)
+	}
+
 }
 
 func (self *WidgetGroup) Render(stdscr *tty.PTerm, area *Rect) {

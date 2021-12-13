@@ -11,6 +11,7 @@ import (
 type AppLauncher struct {
 	running     bool
 	scoreBoard  *Scoreboard
+	scoreBoards []*Scoreboard
 	pTerm       *tty.PTerm
 	updateReady bool
 	skin        *skin.Skin
@@ -23,6 +24,12 @@ func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
 		updateReady: true,
 	}
 	return al
+}
+
+func (self *AppLauncher) SetBoard(scoreBoard *Scoreboard) {
+	self.scoreBoard = scoreBoard
+	self.scoreBoards = append(self.scoreBoards, scoreBoard)
+	self.updateReady = true
 }
 
 func (self *AppLauncher) size() *Rect {
@@ -41,9 +48,31 @@ func (self *AppLauncher) ProcessEvent(evt *event.Event) {
 	if evt.EvType == event.EventTypeKey {
 		log.Printf("key = %+v", goncurses.KeyString(goncurses.Key(evt.EvKey)))
 		if evt.EvKey == goncurses.KEY_F10 {
-			self.running = false
+			var scoreBoardCount int = len(self.scoreBoards)
+
+			/* Notify board about exit */
+			//var activeScoreBoard = self.scoreBoards[scoreBoardCount - 1] // TODO - process exit event ...
+
+			/* Remove in board stack registry */
+			if scoreBoardCount > 0 {
+				self.scoreBoards = self.scoreBoards[:scoreBoardCount-1]
+			}
+
+			/* Select previous scoreboard */
+			var prevScoreBoard *Scoreboard = nil
+			if scoreBoardCount > 0 {
+				prevScoreBoard = self.scoreBoards[scoreBoardCount-1]
+			}
+			self.scoreBoard = prevScoreBoard
 		}
 	}
+
+	if self.scoreBoard != nil {
+		self.scoreBoard.ProcessEvent(evt)
+	} else {
+		self.running = false
+	}
+
 }
 
 func (self *AppLauncher) reset() {
