@@ -6,8 +6,15 @@
   * libncurses
 
 ## Source code compile
+  
+### Prepare Debian bases distributions
 
-You SHOULD use next shell command to Skyline Commander compile:
+    $ sudo apt-get install pkg-config
+    $ go build
+	
+### Prepare MacOS X system
 
-	$ go build -o sc
-
+    $ brew install ncurses
+    $ export PKG_CONFIG_PATH="/usr/local/opt/ncurses/lib/pkgconfig"
+    $ go build
+    
