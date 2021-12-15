@@ -3,9 +3,7 @@ package widget
 import "github.com/vit1251/skyline-commander/tty/event"
 
 type GaugeWidget struct {
-	IWidget
-	x       uint16
-	y       uint16
+	BaseWidget
 	max     uint64
 	current uint64
 	width   uint16
@@ -45,8 +43,10 @@ func (self *GaugeWidget) Render(area *Rect) {
 
 func NewGaugeWidget() *GaugeWidget {
 	gw := &GaugeWidget{
-		x:       0,
-		y:       0,
+		BaseWidget: BaseWidget{
+			x: 0,
+			y: 0,
+		},
 		current: 0,
 		max:     100,
 		width:   20,
@@ -61,11 +61,6 @@ func (self *GaugeWidget) SetWidth(width uint16) {
 //func (self *GaugeWidget) SetColor(color string) {
 //	self.color = color
 //}
-
-func (self *GaugeWidget) SetPos(x uint16, y uint16) {
-	self.x = x
-	self.y = y
-}
 
 func (self *GaugeWidget) SetValue(max uint64, current uint64) {
 	self.max = max

@@ -1,12 +1,15 @@
 package widget
 
 type LabelWidget struct {
-	//    color: &'a dyn termion::color::Color,
-	//    x: u16,
-	//    y: u16,
+	BaseWidget
 }
 
 func NewLabelWidget() *LabelWidget {
-	lw := &LabelWidget{}
+	lw := &LabelWidget{
+		BaseWidget{
+			x: 0,
+			y: 0,
+		},
+	}
 	return lw
 }

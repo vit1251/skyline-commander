@@ -1,22 +1,21 @@
 package widget
 
 type ButtonWidget struct {
-	//    color: &'a dyn termion::color::Color,
-	//    x: u16,
-	//    y: u16,
-	//    title: String,
-	//    callback: Option<Box<dyn Fn()>>,
-	//    focused: bool,
+	BaseWidget
+	title    string
+	callback func()
+	focused  bool
 }
 
 func NewButtonWidget() *ButtonWidget {
 	bw := &ButtonWidget{
-		//            color: &Cyan,
-		//            x: 0,
-		//            y: 0,
-		//            callback: None,
-		//            title: String::new(),
-		//            focused: false,
+		BaseWidget: BaseWidget{
+			x: 0,
+			y: 0,
+		},
+		callback: nil,
+		title:    "",
+		focused:  false,
 	}
 	return bw
 }

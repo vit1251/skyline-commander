@@ -9,9 +9,7 @@ import (
 )
 
 type InputWidget struct {
-	IWidget
-	x           int
-	y           int
+	BaseWidget
 	focused     bool
 	value       string
 	placeholder string
@@ -73,8 +71,10 @@ func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
 
 func NewInputWidget() *InputWidget {
 	iw := &InputWidget{
-		x:           0,
-		y:           0,
+		BaseWidget: BaseWidget{
+			x: 0,
+			y: 0,
+		},
 		focused:     true,
 		callback:    nil,
 		isPassword:  false,
@@ -86,17 +86,12 @@ func NewInputWidget() *InputWidget {
 	return iw
 }
 
-//    pub fn set_placeholder(&mut self, placeholder: &str) {
-//        self.placeholder = String::from(placeholder);
-//    }
+func (self *InputWidget) SetPlaceholder(placeholder string) {
+	self.placeholder = placeholder
+}
 
 //    pub fn set_color(&mut self, color: &'a dyn termion::color::Color) {
 //        self.color = color;
-//    }
-
-//    pub fn set_pos(&mut self, x: u16, y: u16) {
-//        self.x = x;
-//        self.y = y;
 //    }
 
 //    pub fn set_width(&mut self, width: u16) {
@@ -107,21 +102,15 @@ func NewInputWidget() *InputWidget {
 //        self.point = point;
 //    }
 
-//    pub fn clean(&mut self) {
-//        self.value = String::from("");
-//    }
+func (self *InputWidget) Clean() {
+	self.value = ""
+}
 
-//    pub fn is_empty(&self) -> bool {
-//        self.value.len() == 0
-//    }
+func (self *InputWidget) IsEmpty() bool {
+	return self.value == ""
+}
 
 func (self *InputWidget) SetCallback(callback func(string)) *InputWidget {
 	self.callback = callback
-	return self
-}
-
-func (self *InputWidget) SetPos(y int, x int) *InputWidget {
-	self.y = y
-	self.x = x
 	return self
 }
