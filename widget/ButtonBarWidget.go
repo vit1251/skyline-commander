@@ -2,6 +2,7 @@ package widget
 
 import (
 	"fmt"
+	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/strutil"
 	"github.com/vit1251/skyline-commander/tty"
@@ -23,7 +24,7 @@ type ButtonBarLabel struct {
 }
 
 type ButtonBarWidget struct {
-	IWidget
+	Widget
 	labels []ButtonBarLabel
 }
 
@@ -44,6 +45,7 @@ func NewButtonBarWidget() *ButtonBarWidget {
 	bbw := &ButtonBarWidget{
 		labels: labels,
 	}
+	bbw.Widget.callback = bbw.processCallback
 
 	return bbw
 }
@@ -147,7 +149,12 @@ func (self *ButtonBarWidget) drawKey(pTerm *tty.PTerm, area *Rect, skin *skin.Sk
 
 }
 
-func (self *ButtonBarWidget) Render(pTerm *tty.PTerm, area *Rect, skin *skin.Skin) {
+func (self *ButtonBarWidget) Draw() {
+
+	pTerm := ctx.GetTerm()
+	mainSkin := ctx.GetSkin()
+	maxY, maxX := pTerm.MaxYX()
+	area := NewRect(0, 0, uint(maxX), uint(maxY))
 
 	/* Step 1. Initialize button positions */
 	self.initButtonPositions(area)
@@ -158,9 +165,16 @@ func (self *ButtonBarWidget) Render(pTerm *tty.PTerm, area *Rect, skin *skin.Ski
 
 	/* Step 1. Draw bar */
 	for _, key := range []uint{1, 2, 3, 4, 5, 6, 7, 8, 9, 10} {
-		self.drawKey(pTerm, area, skin, key)
+		self.drawKey(pTerm, area, mainSkin, key)
 	}
 
+}
+
+func (self *ButtonBarWidget) processCallback(msg WidgetMsg) {
+	switch msg {
+	case MsgDraw:
+		self.Draw()
+	}
 }
 
 func (self *ButtonBarWidget) getLabel(key uint) *ButtonBarLabel {

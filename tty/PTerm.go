@@ -2,6 +2,7 @@ package tty
 
 import (
 	"github.com/gbin/goncurses"
+	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 	"os"
@@ -169,7 +170,7 @@ func colorToIndex(colorName string) int16 {
 	return colorIndex
 }
 
-func (self *PTerm) InitColor(fg string, bg string) int16 {
+func (self *PTerm) InitColor(fg string, bg string) skin.ColorPair {
 	pairIndex := nextPairIndex
 	bgColorIndex := colorToIndex(bg)
 	fgColorIndex := colorToIndex(fg)
@@ -179,18 +180,26 @@ func (self *PTerm) InitColor(fg string, bg string) int16 {
 	}
 	nextPairIndex += 1
 
-	return pairIndex
+	return skin.ColorPair(pairIndex)
 }
 
-func (self *PTerm) ColorOn(pair int16) {
+func (self *PTerm) ColorOn(pair skin.ColorPair) {
 	log.Printf("PTerm: set color: pair = %d", pair)
-	self.stdscr.ColorOn(pair)
+	self.stdscr.ColorOn(int16(pair))
 }
-func (self *PTerm) ColorOff(pair int16) {
+func (self *PTerm) ColorOff(pair skin.ColorPair) {
 	log.Printf("PTerm: set color: pair = %d", pair)
-	self.stdscr.ColorOff(pair)
+	self.stdscr.ColorOff(int16(pair))
 }
 
 func (self *PTerm) Touch() {
 	self.stdscr.Touch()
+}
+
+func (self *PTerm) FillRegion(x int, y int, lines int, cols int, ch rune) {
+	//TODO - self.stdscr.Re
+}
+
+func (self *PTerm) DrawBox(y int, x int, lines int, cols int, b bool) {
+	// TODO -
 }

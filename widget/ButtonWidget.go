@@ -1,7 +1,7 @@
 package widget
 
 type ButtonWidget struct {
-	BaseWidget
+	Widget
 	title    string
 	callback func()
 	focused  bool
@@ -9,7 +9,7 @@ type ButtonWidget struct {
 
 func NewButtonWidget() *ButtonWidget {
 	bw := &ButtonWidget{
-		BaseWidget: BaseWidget{
+		Widget: Widget{
 			x: 0,
 			y: 0,
 		},

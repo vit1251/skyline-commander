@@ -1,12 +1,12 @@
 package widget
 
 type CheckWidget struct {
-	BaseWidget
+	Widget
 }
 
 func NewCheckWidget() *CheckWidget {
 	cw := &CheckWidget{
-		BaseWidget{
+		Widget{
 			x: 0,
 			y: 0,
 		},

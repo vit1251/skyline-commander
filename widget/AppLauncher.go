@@ -2,6 +2,7 @@ package widget
 
 import (
 	"github.com/gbin/goncurses"
+	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty"
 	"github.com/vit1251/skyline-commander/tty/event"
@@ -12,9 +13,7 @@ type AppLauncher struct {
 	running     bool
 	scoreBoard  *Scoreboard
 	scoreBoards []*Scoreboard
-	pTerm       *tty.PTerm
 	updateReady bool
-	skin        *skin.Skin
 }
 
 func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
@@ -30,17 +29,6 @@ func (self *AppLauncher) SetBoard(scoreBoard *Scoreboard) {
 	self.scoreBoard = scoreBoard
 	self.scoreBoards = append(self.scoreBoards, scoreBoard)
 	self.updateReady = true
-}
-
-func (self *AppLauncher) size() *Rect {
-	y, x := self.pTerm.MaxYX()
-	return NewRect(0, 0, uint(x), uint(y))
-}
-
-func (self *AppLauncher) render() {
-
-	area := self.size()
-	self.scoreBoard.render(self.pTerm, area, self.skin)
 }
 
 func (self *AppLauncher) ProcessEvent(evt *event.Event) {
@@ -68,66 +56,64 @@ func (self *AppLauncher) ProcessEvent(evt *event.Event) {
 	}
 
 	if self.scoreBoard != nil {
-		self.scoreBoard.ProcessEvent(evt)
+		//		self.scoreBoard.ProcessEvent(evt)
 	} else {
 		self.running = false
 	}
 
 }
 
-func (self *AppLauncher) reset() {
-	self.pTerm.Erase()
-}
-
-func (self *AppLauncher) makeDefaultSkin() *skin.Skin {
+func (self *AppLauncher) makeDefaultSkin(pTerm *tty.PTerm) *skin.Skin {
 
 	s := skin.NewSkin()
 
 	/* Core */
-	s.Register("core", "_default_", self.pTerm.InitColor("lightgray", "blue"))
-	s.Register("core", "selected", self.pTerm.InitColor("black", "cyan"))
-	s.Register("core", "marked", self.pTerm.InitColor("yellow", "blue"))
-	s.Register("core", "markselect", self.pTerm.InitColor("yellow", "cyan"))
-	s.Register("core", "gauge", self.pTerm.InitColor("white", "black"))
-	s.Register("core", "input", self.pTerm.InitColor("black", "cyan"))
-	s.Register("core", "reverse", self.pTerm.InitColor("black", "lightgray"))
+	s.Register("core", "_default_", pTerm.InitColor("lightgray", "blue"))
+	s.Register("core", "selected", pTerm.InitColor("black", "cyan"))
+	s.Register("core", "marked", pTerm.InitColor("yellow", "blue"))
+	s.Register("core", "markselect", pTerm.InitColor("yellow", "cyan"))
+	s.Register("core", "gauge", pTerm.InitColor("white", "black"))
+	s.Register("core", "input", pTerm.InitColor("black", "cyan"))
+	s.Register("core", "reverse", pTerm.InitColor("black", "lightgray"))
 
 	/* Button bar */
-	s.Register("buttonbar", "hotkey", self.pTerm.InitColor("white", "black"))
-	s.Register("buttonbar", "button", self.pTerm.InitColor("black", "cyan"))
+	s.Register("buttonbar", "hotkey", pTerm.InitColor("white", "black"))
+	s.Register("buttonbar", "button", pTerm.InitColor("black", "cyan"))
 
 	return s
 }
 
 func (self *AppLauncher) Run() {
 
-	self.pTerm = tty.NewPTerm()
-	err1 := self.pTerm.Init()
+	/* Initialize Terminal */
+	pTerm := tty.NewPTerm()
+	err1 := pTerm.Init()
 	if err1 != nil {
 		panic(err1)
 	}
-	defer self.pTerm.End()
+	defer pTerm.End()
+	ctx.SetTerm(pTerm)
 
-	/* Prepare main Skin */
-	self.skin = self.makeDefaultSkin()
-	self.skin.Dump()
+	/* Initialize Skin */
+	mainSkin := self.makeDefaultSkin(pTerm)
+	mainSkin.Dump()
+	ctx.SetSkin(mainSkin)
 
 	self.running = true
 	for self.running {
 
 		/* Render scoreboard */
 		if self.updateReady {
-			self.pTerm.Touch()
-			self.reset()
-			self.render()
-			self.pTerm.Refresh()
+			pTerm.Touch()
+			self.scoreBoard.Draw()
+			pTerm.Refresh()
 			log.Printf("Update: err = %v", goncurses.Update())
 			self.updateReady = false
 		}
 
 		/* Process event */
 		select {
-		case evt := <-self.pTerm.C:
+		case evt := <-pTerm.C:
 			log.Printf("pTerm: evt = %+v", evt)
 			self.ProcessEvent(&evt)
 			self.updateReady = true

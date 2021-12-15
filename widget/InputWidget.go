@@ -9,7 +9,7 @@ import (
 )
 
 type InputWidget struct {
-	BaseWidget
+	Widget
 	focused     bool
 	value       string
 	placeholder string
@@ -71,7 +71,7 @@ func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
 
 func NewInputWidget() *InputWidget {
 	iw := &InputWidget{
-		BaseWidget: BaseWidget{
+		Widget: Widget{
 			x: 0,
 			y: 0,
 		},

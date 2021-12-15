@@ -1,12 +1,12 @@
 package widget
 
 type LabelWidget struct {
-	BaseWidget
+	Widget
 }
 
 func NewLabelWidget() *LabelWidget {
 	lw := &LabelWidget{
-		BaseWidget{
+		Widget{
 			x: 0,
 			y: 0,
 		},

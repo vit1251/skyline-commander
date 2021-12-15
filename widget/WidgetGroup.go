@@ -1,11 +1,5 @@
 package widget
 
-import (
-	"github.com/gbin/goncurses"
-	"github.com/vit1251/skyline-commander/tty"
-	"github.com/vit1251/skyline-commander/tty/event"
-)
-
 type WidgetGroup struct {
 	IWidget
 	widgets []IWidget
@@ -24,24 +18,24 @@ func (self *WidgetGroup) RegisterWidget(widget IWidget) {
 	}
 }
 
-func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+//func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+//
+//	/* Process widget group actions */
+//	if evt.EvType == event.EventTypeKey {
+//		if evt.EvKey == goncurses.KEY_RETURN {
+//
+//		}
+//	}
+//
+//	/* Process every widget */
+//	for _, w := range self.widgets {
+//		w.ProcessEvent(evt)
+//	}
+//
+//}
 
-	/* Process widget group actions */
-	if evt.EvType == event.EventTypeKey {
-		if evt.EvKey == goncurses.KEY_RETURN {
-
-		}
-	}
-
-	/* Process every widget */
+func (self *WidgetGroup) Draw() {
 	for _, w := range self.widgets {
-		w.ProcessEvent(evt)
-	}
-
-}
-
-func (self *WidgetGroup) Render(stdscr *tty.PTerm, area *Rect) {
-	for _, w := range self.widgets {
-		w.Render(stdscr, area)
+		w.Draw()
 	}
 }

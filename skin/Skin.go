@@ -6,24 +6,26 @@ type Skin struct {
 	colors []SkinColor
 }
 
+type ColorPair int16
+
 func NewSkin() *Skin {
 	s := &Skin{}
 	return s
 }
 
-func (self *Skin) Register(group string, name string, pairIndex int16) {
+func (self *Skin) Register(group string, name string, pairIndex ColorPair) {
 	color := SkinColor{
 		group:     group,
 		name:      name,
-		pairIndex: pairIndex,
+		pairIndex: int16(pairIndex),
 	}
 	self.colors = append(self.colors, color)
 }
 
-func (self *Skin) GetColor(group string, name string) int16 {
+func (self *Skin) GetColor(group string, name string) ColorPair {
 	for _, c := range self.colors {
 		if c.group == group && c.name == name {
-			return c.pairIndex
+			return ColorPair(c.pairIndex)
 		}
 	}
 	return 0
