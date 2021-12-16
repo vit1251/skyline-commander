@@ -1,7 +1,7 @@
 package widget
 
 import (
-	"github.com/gbin/goncurses"
+	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty"
@@ -10,17 +10,18 @@ import (
 )
 
 type AppLauncher struct {
-	running     bool
-	scoreBoard  *Scoreboard
-	scoreBoards []*Scoreboard
-	updateReady bool
+	running             bool
+	constructScoreboard func() *Scoreboard
+	scoreBoard          *Scoreboard
+	scoreBoards         []*Scoreboard
+	updateReady         bool
 }
 
-func AppLauncherWithScoreboard(sb *Scoreboard) *AppLauncher {
+func AppLauncherWithScoreboard(constructScoreboard func() *Scoreboard) *AppLauncher {
 	al := &AppLauncher{
-		running:     false,
-		scoreBoard:  sb,
-		updateReady: true,
+		running:             false,
+		constructScoreboard: constructScoreboard,
+		updateReady:         true,
 	}
 	return al
 }
@@ -99,6 +100,10 @@ func (self *AppLauncher) Run() {
 	mainSkin.Dump()
 	ctx.SetSkin(mainSkin)
 
+	/* Initialize scoreboard */
+	self.scoreBoard = self.constructScoreboard()
+
+	/* Main process */
 	self.running = true
 	for self.running {
 

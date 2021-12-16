@@ -1,4 +1,12 @@
-github.com/famz/SetLocale v0.0.0-20140414113655-0457ad1065dd h1:AwrM2Zy3xXTjdGwwxxzhFNBME1DtXuW+/ThEnGmW4M4=
-github.com/famz/SetLocale v0.0.0-20140414113655-0457ad1065dd/go.mod h1:GNjuOaiKbnzrSsZeuQqVD+sBwmEQ7pPhnZS4zfUbmPk=
-github.com/gbin/goncurses v0.0.0-20141106211150-34d9399fcea5 h1:1zsAMqM0C3Yjv9KWjh/68s/07bYeev6c0D4FwHkl13w=
-github.com/gbin/goncurses v0.0.0-20141106211150-34d9399fcea5/go.mod h1:dmRjyC3ZOQQ4EXWMOIAQi0TLaJPcg61LFsJ9mvhSGRE=
+github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
+github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+github.com/vit1251/goncurses v0.0.0-20211216022027-f4d88e850822 h1:Hk/L2pkUpN8srYbZXowS7G0HBB9IkiPgnkqx6vnT8s0=
+github.com/vit1251/goncurses v0.0.0-20211216022027-f4d88e850822/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
+github.com/vit1251/goncurses v0.0.0-20211216022836-63b94a23bb5e h1:holwkmxwfaZ98L+N58PibnL3MWTuX5vFvLsMXneZ6HE=
+github.com/vit1251/goncurses v0.0.0-20211216022836-63b94a23bb5e/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
+github.com/vit1251/goncurses v0.0.0-20211216031409-1f7188e429ac h1:rdqzNBOl4TL1Z+CokSqwO3Fv7dnS7iijn+sooPVGVv4=
+github.com/vit1251/goncurses v0.0.0-20211216031409-1f7188e429ac/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
+github.com/vit1251/goncurses v0.0.0-20211216034040-245d690f6bbb h1:8FYYRN7POMQZQnSDELRe8UIpfle5v+aXuTSPO3YUC7k=
+github.com/vit1251/goncurses v0.0.0-20211216034040-245d690f6bbb/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
+golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e h1:fLOSk5Q00efkSvAm+4xcoXD+RRmLmmulPn5I3Y9F2EM=
+golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

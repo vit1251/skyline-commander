@@ -7,8 +7,8 @@ type LabelWidget struct {
 func NewLabelWidget() *LabelWidget {
 	lw := &LabelWidget{
 		Widget{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 		},
 	}
 	return lw

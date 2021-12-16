@@ -7,16 +7,16 @@ import (
 
 type Widget struct {
 	IWidget
-	x        int /* Widget X position */
-	y        int /* Widget Y position */
-	lines    int
-	cols     int
+	X        int /* Widget X position */
+	Y        int /* Widget Y position */
+	Lines    int
+	Cols     int
 	callback func(msg WidgetMsg)
 }
 
 func (self *Widget) SetPos(y int, x int) {
-	self.y = y
-	self.x = x
+	self.Y = y
+	self.X = x
 }
 
 func (self *Widget) defaultCallback(msg WidgetMsg) {
@@ -25,11 +25,15 @@ func (self *Widget) defaultCallback(msg WidgetMsg) {
 
 func (self *Widget) Erase() {
 	pTerm := ctx.GetTerm()
-	pTerm.FillRegion(self.x, self.y, self.lines, self.cols, ' ')
+	pTerm.FillRegion(self.X, self.Y, self.Lines, self.Cols, ' ')
 }
 
 func (self *Widget) GotoYX(y int, x int) {
-	// TODO - ...
+	var newY int = self.Y + y
+	var newX int = self.X + x
+	log.Printf("Widget: GotoXY: newX = %d newY = %d", newX, newY)
+	pTerm := ctx.GetTerm()
+	pTerm.Move(newY, newX)
 }
 
 func (self *Widget) Draw() {

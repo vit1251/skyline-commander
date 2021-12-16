@@ -44,8 +44,8 @@ func (self *GaugeWidget) Render(area *Rect) {
 func NewGaugeWidget() *GaugeWidget {
 	gw := &GaugeWidget{
 		Widget: Widget{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 		},
 		current: 0,
 		max:     100,

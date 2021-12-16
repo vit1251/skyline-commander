@@ -1,6 +1,6 @@
 package event
 
-import "github.com/gbin/goncurses"
+import "github.com/vit1251/goncurses"
 
 type EventType int
 

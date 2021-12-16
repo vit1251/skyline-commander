@@ -1,7 +1,8 @@
 package tty
 
 import (
-	"github.com/gbin/goncurses"
+	"fmt"
+	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
@@ -120,6 +121,10 @@ func (self *PTerm) Move(y int, x int) {
 	self.stdscr.Move(y, x)
 }
 
+func (self *PTerm) GotoYX(y int, x int) {
+	self.stdscr.Move(y, x)
+}
+
 func (self *PTerm) Print(msg string) {
 	self.stdscr.Print(msg)
 }
@@ -196,10 +201,160 @@ func (self *PTerm) Touch() {
 	self.stdscr.Touch()
 }
 
-func (self *PTerm) FillRegion(x int, y int, lines int, cols int, ch rune) {
-	//TODO - self.stdscr.Re
+func (self *PTerm) FillRegion(x int, y int, rows int, cols int, ch rune) {
+
+	// TODO -     if (!tty_clip (&y, &x, &rows, &cols))
+	// TODO -         return;
+
+	var i int
+	for i = 0; i < rows; i++ {
+		self.stdscr.HLine(y+i, x, goncurses.Char(ch), cols)
+	}
+
+	self.Move(y, x)
+
 }
 
-func (self *PTerm) DrawBox(y int, x int, lines int, cols int, b bool) {
-	// TODO -
+const (
+	FRM_VERT  = 0x0001
+	FRM_HORIZ = 0x0002
+
+	FRM_ULCORNER = 0x0101
+	FRM_LLCORNER = 0x0102
+	FRM_URCORNER = 0x0103
+	FRM_LRCORNER = 0x0104
+
+	FRM_LTEE = 0x0201
+	FRM_RTEE = 0x0202
+)
+
+func (self *PTerm) DrawBox(y int, x int, ys int, xs int, single bool) {
+
+	var drawRune rune
+	var y2 int
+	var x2 int
+
+	if ys <= 0 || xs <= 0 {
+		return
+	}
+
+	ys--
+	xs--
+
+	y2 = y + ys
+	x2 = x + xs
+
+	drawRune = self.GetAltChar(FRM_VERT, single) // mc_tty_frm[single ? MC_TTY_FRM_VERT : MC_TTY_FRM_DVERT]
+	self.DrawVLine(y, x, drawRune, ys)
+	self.DrawVLine(y, x2, drawRune, ys)
+
+	drawRune = self.GetAltChar(FRM_HORIZ, single) // mc_tty_frm[single ? MC_TTY_FRM_HORIZ : MC_TTY_FRM_DHORIZ]
+	self.DrawHLine(y, x, drawRune, xs)
+	self.DrawHLine(y2, x, drawRune, xs)
+
+	/* Draw upper left */
+	self.GotoYX(y, x)
+	drawRune = self.GetAltChar(FRM_ULCORNER, single)
+	self.Print(fmt.Sprintf("%c", drawRune))
+
+	/* Draw lower left*/
+	self.GotoYX(y2, x)
+	drawRune = self.GetAltChar(FRM_LLCORNER, single)
+	self.Print(fmt.Sprintf("%c", drawRune))
+
+	/* Draw upper right */
+	self.GotoYX(y, x2)
+	drawRune = self.GetAltChar(FRM_URCORNER, single)
+	self.Print(fmt.Sprintf("%c", drawRune))
+
+	/* Draw lower right */
+	self.GotoYX(y2, x2)
+	drawRune = self.GetAltChar(FRM_LRCORNER, single)
+	self.Print(fmt.Sprintf("%c", drawRune))
+}
+
+func (self *PTerm) GetAltChar(runeName int, single bool) rune {
+	if single {
+		switch runeName {
+		case FRM_VERT:
+			return '│'
+		case FRM_HORIZ:
+			return '─'
+		case FRM_LLCORNER:
+			return '└'
+		case FRM_URCORNER:
+			return '┐'
+		case FRM_ULCORNER:
+			return '┌'
+		case FRM_LRCORNER:
+			return '┘'
+		case FRM_LTEE:
+			return '├'
+		case FRM_RTEE:
+			return '┤'
+		}
+	} else {
+		switch runeName {
+		case FRM_VERT:
+			return '║'
+		case FRM_HORIZ:
+			return '═'
+		case FRM_LLCORNER:
+			return '╚'
+		case FRM_URCORNER:
+			return '╗'
+		case FRM_ULCORNER:
+			return '╔'
+		case FRM_LRCORNER:
+			return '╝'
+		}
+	}
+	return '?'
+}
+
+func (self *PTerm) DrawVLine(y int, x int, ch rune, len int) {
+
+	var y1 int = y
+
+	maxY, maxX := self.MaxYX()
+
+	if x < 0 || y < 0 || x >= maxX || y >= maxY {
+		return
+	}
+
+	// TODO - self.stdscr.VLine(y, x, goncurses.Char(ch), len)
+	var curY int
+	for curY = y; curY < y+len && curY < maxY; curY++ {
+		self.Move(curY, x)
+		self.Print(fmt.Sprintf("%c", ch))
+	}
+
+	/* Restore position */
+	self.Move(y1, x)
+
+}
+
+func (self *PTerm) DrawHLine(y int, x int, ch rune, len int) {
+
+	var x1 int = x
+
+	maxY, maxX := self.MaxYX()
+
+	if x < 0 || y < 0 || y >= maxY || x >= maxX {
+		return
+	}
+
+	//TODO - self.stdscr.HLine(y, x, goncurses.Char(ch), len)
+	var curX int
+	for curX = x; curX < x+len && curX < maxX; curX++ {
+		self.Move(y, curX)
+		self.Print(fmt.Sprintf("%c", ch))
+	}
+
+	self.GotoYX(y, x1)
+
+}
+
+func (self *PTerm) GetYX() (int, int) {
+	return self.stdscr.CursorYX()
 }

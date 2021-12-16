@@ -2,7 +2,7 @@ package widget
 
 import (
 	"fmt"
-	"github.com/gbin/goncurses"
+	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/tty"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"unicode/utf8"
@@ -49,7 +49,7 @@ func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
 	//        }
 
 	/* Step 2. Set position */
-	pTerm.Move(self.y, self.x)
+	pTerm.Move(self.Y, self.X)
 
 	/* Step 3. Draw input */
 	var out string = fmt.Sprintf("%s", self.value)
@@ -72,8 +72,8 @@ func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
 func NewInputWidget() *InputWidget {
 	iw := &InputWidget{
 		Widget: Widget{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 		},
 		focused:     true,
 		callback:    nil,

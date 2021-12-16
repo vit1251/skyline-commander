@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/vit1251/skyline-commander/filemanager"
 	"github.com/vit1251/skyline-commander/widget"
 	"io"
 	"log"
@@ -24,13 +25,7 @@ func createPanelBoard() *widget.Scoreboard {
 
 	mainWidgetGroup := widget.NewWidgetGroup()
 
-	/* Left panel */
-	leftPanel := widget.NewPanelWidget()
-	mainWidgetGroup.RegisterWidget(leftPanel)
-
-	/* Right panel */
-	rightPanel := widget.NewPanelWidget()
-	mainWidgetGroup.RegisterWidget(rightPanel)
+	filemanager.CreatePanel(mainWidgetGroup)
 
 	/* Input panel */
 	mainInput := widget.NewInputWidget()
@@ -105,10 +100,10 @@ func main() {
 	}()
 	log.SetOutput(stream)
 
-	mainBoard := createPanelBoard()
-
 	/* Create application with single scoreboard */
-	app := widget.AppLauncherWithScoreboard(mainBoard)
+	app := widget.AppLauncherWithScoreboard(func() *widget.Scoreboard {
+		return createPanelBoard()
+	})
 
 	/* Run application */
 	app.Run()

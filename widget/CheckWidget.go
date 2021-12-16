@@ -7,8 +7,8 @@ type CheckWidget struct {
 func NewCheckWidget() *CheckWidget {
 	cw := &CheckWidget{
 		Widget{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 		},
 	}
 	return cw

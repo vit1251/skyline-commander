@@ -10,8 +10,8 @@ type ButtonWidget struct {
 func NewButtonWidget() *ButtonWidget {
 	bw := &ButtonWidget{
 		Widget: Widget{
-			x: 0,
-			y: 0,
+			X: 0,
+			Y: 0,
 		},
 		callback: nil,
 		title:    "",
