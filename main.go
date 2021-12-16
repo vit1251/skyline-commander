@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/filemanager"
 	"github.com/vit1251/skyline-commander/widget"
 	"io"
@@ -25,51 +24,12 @@ const (
 
 func createPanelBoard() *widget.Scoreboard {
 
-	mainTerm := ctx.GetTerm()
-	maxY, maxX := mainTerm.MaxYX()
-
-	mainWidgetGroup := widget.NewWidgetGroup()
-
-	/* Create filemanager panel */
-	filemanager.CreatePanel(mainWidgetGroup)
-
-	/* Execute input group */
-	execWidgetGroup := widget.NewWidgetGroup()
-	execPrompt := widget.NewLabelWidget()
-	execPrompt.SetYX(maxY-2, 0)
-	execPrompt.SetTitle("$ ")
-	execWidgetGroup.RegisterWidget(execPrompt)
-
-	execInput := widget.NewInputWidget()
-	execInput.SetValue("touch debug.log")
-	execInput.SetCallback(func(value string) {
-		log.Printf("Execute shell operation: %q", value)
-	})
-	execInput.SetYX(maxY-2, 3)
-	execInput.SetWidth(maxX - 3)
-	execWidgetGroup.RegisterWidget(execInput)
-	mainWidgetGroup.RegisterWidget(execWidgetGroup)
-
-	/* Create hotkey bar */
-	mainBar := widget.NewButtonBarWidget()
-	mainBar.SetLabel(1, "Help")
-	mainBar.SetLabel(2, "Menu")
-	mainBar.SetLabel(3, "View")
-	mainBar.SetLabel(4, "Edit")
-	mainBar.SetLabel(5, "Copy")
-	mainBar.SetLabel(6, "Move")
-	mainBar.SetLabel(7, "MkDir")
-	mainBar.SetLabel(8, "Remove")
-	mainBar.SetLabel(9, "PullDn")
-	mainBar.SetLabel(10, "Quit")
-
-	mainMenu := widget.NewMenuWidget()
+	/* Create main File Manager widget */
+	mainFileManager := filemanager.NewFileManagerWidget()
 
 	/* Create main Scoreboard */
 	mainBoard := widget.NewScoreBoardBuilder().
-		WithWidget(mainWidgetGroup).
-		WithButtonBar(mainBar).
-		WithMainMenu(mainMenu).
+		WithWidget(mainFileManager).
 		Build()
 
 	return mainBoard

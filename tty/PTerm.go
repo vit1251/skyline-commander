@@ -2,7 +2,7 @@ package tty
 
 import (
 	"fmt"
-	"github.com/vit1251/goncurses"
+	ncursesw "github.com/vit1251/go-ncursesw"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
@@ -14,10 +14,10 @@ import (
 )
 
 type PTerm struct {
-	running bool              /* Main event processing marker   */
-	stdscr  *goncurses.Window /* Use libncursesw C binding      */
-	C       chan event.Event  /* Channel with event             */
-	resized bool              /* Resize marker                  */
+	running bool             /* Main event processing marker   */
+	stdscr  *ncursesw.Window /* Use libncursesw C binding      */
+	C       chan event.Event /* Channel with event             */
+	resized bool             /* Resize marker                  */
 }
 
 func NewPTerm() *PTerm {
@@ -31,18 +31,18 @@ func (self *PTerm) Init() error {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGWINCH)
 
-	log.Printf("Initialize ncurses: version = %s", goncurses.CursesVersion())
+	log.Printf("Initialize ncurses: version = %s", ncursesw.CursesVersion())
 
-	stdscr, err1 := goncurses.Init()
+	stdscr, err1 := ncursesw.Init()
 	if err1 != nil {
 		return err1
 	}
 	self.stdscr = stdscr
 
-	goncurses.CBreak(true)
-	goncurses.Raw(true)
-	goncurses.Echo(false)
-	err2 := goncurses.Cursor(0)
+	ncursesw.CBreak(true)
+	ncursesw.Raw(true)
+	ncursesw.Echo(false)
+	err2 := ncursesw.Cursor(0)
 	if err2 != nil {
 		return err2
 	}
@@ -51,7 +51,7 @@ func (self *PTerm) Init() error {
 		return err3
 	}
 
-	err4 := goncurses.StartColor()
+	err4 := ncursesw.StartColor()
 	if err4 != nil {
 		return err4
 	}
@@ -98,7 +98,7 @@ func (self *PTerm) Init() error {
 			log.Printf("waitInput is %q msec.", time.Since(startWait))
 
 			/* Process input */
-			var key goncurses.Key = stdscr.GetChar()
+			var key ncursesw.Key = stdscr.GetChar()
 			if key != 0 {
 				console <- int(key)
 			}
@@ -136,7 +136,7 @@ func (self *PTerm) Init() error {
 }
 
 func (self *PTerm) End() {
-	goncurses.End()
+	ncursesw.End()
 }
 
 func (self *PTerm) Erase() {
@@ -178,7 +178,7 @@ func (self *PTerm) updateTermSize() error {
 	)
 
 	/* Set new PTerm size */
-	err2 := goncurses.ResizeTerm(height, width)
+	err2 := ncursesw.ResizeTerm(height, width)
 	if err2 != nil {
 		return err2
 	}
@@ -192,17 +192,17 @@ var nextPairIndex int16 = 1
 func colorToIndex(colorName string) int16 {
 	var colorIndex int16 = 0
 	if colorName == "black" {
-		colorIndex = goncurses.C_BLACK
+		colorIndex = ncursesw.C_BLACK
 	} else if colorName == "blue" {
-		colorIndex = goncurses.C_BLUE
+		colorIndex = ncursesw.C_BLUE
 	} else if colorName == "lightgray" {
-		colorIndex = goncurses.C_WHITE
+		colorIndex = ncursesw.C_WHITE
 	} else if colorName == "white" {
-		colorIndex = goncurses.C_WHITE // | goncurses.
+		colorIndex = ncursesw.C_WHITE // | goncurses.
 	} else if colorName == "cyan" {
-		colorIndex = goncurses.C_CYAN
+		colorIndex = ncursesw.C_CYAN
 	} else if colorName == "yellow" {
-		colorIndex = goncurses.C_YELLOW
+		colorIndex = ncursesw.C_YELLOW
 	} else {
 		log.Panicf("wong color name %s", colorName)
 	}
@@ -213,7 +213,7 @@ func (self *PTerm) InitColor(fg string, bg string) skin.ColorPair {
 	pairIndex := nextPairIndex
 	bgColorIndex := colorToIndex(bg)
 	fgColorIndex := colorToIndex(fg)
-	err1 := goncurses.InitPair(pairIndex, fgColorIndex, bgColorIndex)
+	err1 := ncursesw.InitPair(pairIndex, fgColorIndex, bgColorIndex)
 	if err1 != nil {
 		panic("init ncurses color error")
 	}
@@ -242,7 +242,7 @@ func (self *PTerm) FillRegion(x int, y int, rows int, cols int, ch rune) {
 
 	var i int
 	for i = 0; i < rows; i++ {
-		self.stdscr.HLine(y+i, x, goncurses.Char(ch), cols)
+		self.stdscr.HLine(y+i, x, ncursesw.Char(ch), cols)
 	}
 
 	self.Move(y, x)

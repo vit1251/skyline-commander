@@ -2,7 +2,7 @@ package widget
 
 import (
 	"fmt"
-	"github.com/vit1251/goncurses"
+	ncursesw "github.com/vit1251/go-ncursesw"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"unicode"
@@ -23,11 +23,11 @@ type InputWidget struct {
 func (self *InputWidget) ProcessEvent(evt *event.Event) {
 	if evt.EvType == event.EventTypeKey {
 		var charRune rune = rune(evt.EvKey)
-		if evt.EvKey == goncurses.KEY_RETURN {
+		if evt.EvKey == ncursesw.KEY_RETURN {
 			if self.callback != nil {
 				self.callback(self.value)
 			}
-		} else if evt.EvKey == goncurses.KEY_BACKSPACE {
+		} else if evt.EvKey == ncursesw.KEY_BACKSPACE {
 			var runes []rune = []rune(self.value)
 			var runeCount int = len(runes)
 			if runeCount > 0 {

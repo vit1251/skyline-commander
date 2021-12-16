@@ -1,7 +1,7 @@
 package widget
 
 import (
-	"github.com/vit1251/goncurses"
+	ncursesw "github.com/vit1251/go-ncursesw"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/tty"
@@ -35,8 +35,8 @@ func (self *AppLauncher) SetBoard(scoreBoard *Scoreboard) {
 func (self *AppLauncher) ProcessEvent(evt *event.Event) {
 
 	if evt.EvType == event.EventTypeKey {
-		log.Printf("key = %+v", goncurses.KeyString(goncurses.Key(evt.EvKey)))
-		if evt.EvKey == goncurses.KEY_F10 {
+		log.Printf("key = %+v", ncursesw.KeyString(ncursesw.Key(evt.EvKey)))
+		if evt.EvKey == ncursesw.KEY_F10 {
 			var scoreBoardCount int = len(self.scoreBoards)
 
 			/* Notify board about exit */
@@ -113,7 +113,7 @@ func (self *AppLauncher) Run() {
 			pTerm.Erase()
 			self.scoreBoard.Draw()
 			pTerm.Refresh()
-			log.Printf("Update: err = %v", goncurses.Update())
+			log.Printf("Update: err = %v", ncursesw.Update())
 			self.updateReady = false
 		}
 

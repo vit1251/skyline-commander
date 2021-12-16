@@ -3,7 +3,7 @@ package filemanager
 import (
 	"fmt"
 	humanize "github.com/dustin/go-humanize"
-	"github.com/vit1251/goncurses"
+	ncursesw "github.com/vit1251/go-ncursesw"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/strutil"
@@ -137,37 +137,46 @@ func (self *PanelWidget) setupBriefFormat() {
 }
 
 func (self *PanelWidget) GetPanelItems() int {
-	return 0
-}
-
-func (self *PanelWidget) processCallback(msg widget.WidgetMsg) {
-	switch msg {
-	case widget.MsgDraw:
-		self.Draw()
-		//default:
-		//	self.Widget.callback(msg)
+	var itemCount int = self.Lines
+	itemCount = itemCount - 1 // use by drawbox
+	itemCount = itemCount - 1 // use by header
+	if self.showMiniInfo {
+		itemCount = itemCount - 1 // use by draw box
+		itemCount = itemCount - 1 // use by text
 	}
+	itemCount = itemCount - 1 // use by drawbox
+	return itemCount
 }
 
 func (self *PanelWidget) ProcessEvent(evt *event.Event) {
 	if evt.EvType == event.EventTypeKey {
-		if evt.EvKey == goncurses.KEY_RETURN {
+		if evt.EvKey == ncursesw.KEY_RETURN {
 			entry := self.GetEntry(self.selected)
 			if entry.IsDirectory {
 				self.cwdPath = path.Join(self.cwdPath, entry.Name)
 				self.updateDirectoryEntries()
 				self.selected = 0
 			}
-		} else if evt.EvKey == goncurses.KEY_UP {
+		} else if evt.EvKey == ncursesw.KEY_HOME {
+			self.selected = 0
+		} else if evt.EvKey == ncursesw.KEY_UP {
+
 			if self.selected > 0 {
 				self.selected = self.selected - 1
 			}
-		} else if evt.EvKey == goncurses.KEY_DOWN {
+
+		} else if evt.EvKey == ncursesw.KEY_DOWN {
+
+			/* Update selected index */
 			var itemCount int = len(self.dir)
 			if self.selected < itemCount {
 				self.selected = self.selected + 1
 			}
+
+		} else if evt.EvKey == ncursesw.KEY_END {
+			self.selected = len(self.dir)
 		}
+
 	}
 }
 
@@ -281,10 +290,25 @@ func (self *PanelWidget) printHeader() {
 
 // adjustTopFile is update panel->selected value to avoid out of range
 func (self *PanelWidget) adjustTopFile() {
-	var panelItemCount int = len(self.dir)
-	if self.selected > panelItemCount {
-		self.selected = panelItemCount
+
+	var dirCount int = len(self.dir)
+	var maxPanelItemSize int = self.GetPanelItems()
+
+	/* Out of range */
+	if self.selected > dirCount {
+		self.selected = 0
 	}
+
+	/* Before window */
+	if self.selected < self.topFile {
+		self.topFile = self.selected
+	}
+
+	/* After window */
+	if self.selected >= self.topFile+maxPanelItemSize {
+		self.topFile = self.selected - maxPanelItemSize
+	}
+
 }
 
 func (self *PanelWidget) paintDir() {
@@ -310,7 +334,7 @@ func (self *PanelWidget) paintDir() {
 
 		/* Draw meta */
 		var colorIndex skin.ColorPair = 0
-		self.repaintFile(itemIndex+self.topFile, colorIndex, false)
+		self.repaintFile(itemIndex, colorIndex, false)
 	}
 }
 
@@ -420,7 +444,7 @@ func (self *PanelWidget) formatFile(itemIndex int) {
 
 	normalColorIndex := mainSkin.GetColor("core", "_default_")
 	selectedColorIndex := mainSkin.GetColor("core", "selected")
-	if itemIndex == self.selected {
+	if self.topFile+itemIndex == self.selected {
 		mainTerm.ColorOn(selectedColorIndex)
 	} else {
 		mainTerm.ColorOn(normalColorIndex)

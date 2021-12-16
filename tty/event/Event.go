@@ -1,6 +1,8 @@
 package event
 
-import "github.com/vit1251/goncurses"
+import (
+	ncursesw "github.com/vit1251/go-ncursesw"
+)
 
 type EventType int
 
@@ -11,7 +13,7 @@ const (
 
 type Event struct {
 	EvType EventType
-	EvKey  goncurses.Key
+	EvKey  ncursesw.Key
 }
 
 func NewEvent() *Event {
@@ -21,14 +23,14 @@ func NewEvent() *Event {
 
 func NewEventFromKey(key int) *Event {
 	var evt *Event
-	if key == goncurses.KEY_RESIZE {
+	if key == ncursesw.KEY_RESIZE {
 		evt = &Event{
 			EvType: EventTypeResize,
 		}
 	} else {
 		evt = &Event{
 			EvType: EventTypeKey,
-			EvKey:  goncurses.Key(key),
+			EvKey:  ncursesw.Key(key),
 		}
 	}
 	return evt

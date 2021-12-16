@@ -1,7 +1,7 @@
 package widget
 
 import (
-	"github.com/vit1251/goncurses"
+	ncursesw "github.com/vit1251/go-ncursesw"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 )
@@ -28,10 +28,10 @@ func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
 
 	/* Process widget group actions */
 	if evt.EvType == event.EventTypeKey {
-		if evt.EvKey == goncurses.KEY_RETURN {
+		if evt.EvKey == ncursesw.KEY_RETURN {
 
 		}
-		if evt.EvKey == goncurses.KEY_TAB {
+		if evt.EvKey == ncursesw.KEY_TAB {
 
 		}
 	}
