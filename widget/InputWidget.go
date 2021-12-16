@@ -5,6 +5,7 @@ import (
 	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/tty/event"
+	"unicode"
 	"unicode/utf8"
 )
 
@@ -21,6 +22,7 @@ type InputWidget struct {
 
 func (self *InputWidget) ProcessEvent(evt *event.Event) {
 	if evt.EvType == event.EventTypeKey {
+		var charRune rune = rune(evt.EvKey)
 		if evt.EvKey == goncurses.KEY_RETURN {
 			if self.callback != nil {
 				self.callback(self.value)
@@ -32,7 +34,7 @@ func (self *InputWidget) ProcessEvent(evt *event.Event) {
 				runes = runes[:runeCount-1]
 				self.value = string(runes)
 			}
-		} else {
+		} else if unicode.IsNumber(charRune) || unicode.IsLetter(charRune) {
 			self.value = fmt.Sprintf("%s%c", self.value, rune(evt.EvKey))
 		}
 

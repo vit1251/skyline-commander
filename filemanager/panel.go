@@ -3,13 +3,18 @@ package filemanager
 import (
 	"fmt"
 	humanize "github.com/dustin/go-humanize"
+	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/skin"
 	"github.com/vit1251/skyline-commander/strutil"
 	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/tty/event"
 	"github.com/vit1251/skyline-commander/util"
 	"github.com/vit1251/skyline-commander/widget"
+	"io/ioutil"
 	"log"
+	"path"
+	"time"
 )
 
 type FormatItem struct {
@@ -22,7 +27,11 @@ type FormatItem struct {
 }
 
 type FileEntry struct {
-	Name string
+	Name         string
+	Size         uint64
+	IsExecutable bool
+	IsDirectory  bool
+	ModTime      time.Time
 }
 
 type PanelWidget struct {
@@ -61,7 +70,43 @@ func NewPanelWidget() *PanelWidget {
 	/* Set up views */
 	pw.setupBriefFormat()
 
+	/* Update directroy entires */
+	pw.updateDirectoryEntries()
+
 	return pw
+}
+
+func (self *PanelWidget) updateDirectoryEntries() error {
+
+	items, err1 := ioutil.ReadDir(self.cwdPath)
+	if err1 != nil {
+		return err1
+	}
+
+	/* Reset directory entries */
+	self.dir = nil
+
+	/* Add up directory */
+	if self.cwdPath != "/" {
+		newDirEntry := new(FileEntry)
+		newDirEntry.Name = ".."
+		newDirEntry.IsDirectory = true
+		self.dir = append(self.dir, newDirEntry)
+	}
+
+	/* Populate directory entries */
+	for _, item := range items {
+		newDirEntry := new(FileEntry)
+		newDirEntry.Name = item.Name()
+		newDirEntry.Size = uint64(item.Size())
+		newDirEntry.IsExecutable = false // item.Mode()
+		newDirEntry.IsDirectory = item.IsDir()
+		newDirEntry.ModTime = item.ModTime()
+
+		self.dir = append(self.dir, newDirEntry)
+	}
+
+	return nil
 }
 
 func NewFormatItem(id string, title string, requestedFieldLen int, expand bool) *FormatItem {
@@ -85,7 +130,8 @@ func (self *PanelWidget) setupBriefFormat() {
 	sizeItem := NewFormatItem("size", "Size", 7, false)
 	self.format = append(self.format, sizeItem)
 
-	modItem := NewFormatItem("mtime", "Modify time", 12, false)
+	//modItem := NewFormatItem("mtime", "Modify time", 12, false)
+	modItem := NewFormatItem("mtime", "Modify time", 16, false)
 	self.format = append(self.format, modItem)
 
 }
@@ -100,6 +146,28 @@ func (self *PanelWidget) processCallback(msg widget.WidgetMsg) {
 		self.Draw()
 		//default:
 		//	self.Widget.callback(msg)
+	}
+}
+
+func (self *PanelWidget) ProcessEvent(evt *event.Event) {
+	if evt.EvType == event.EventTypeKey {
+		if evt.EvKey == goncurses.KEY_RETURN {
+			entry := self.GetEntry(self.selected)
+			if entry.IsDirectory {
+				self.cwdPath = path.Join(self.cwdPath, entry.Name)
+				self.updateDirectoryEntries()
+				self.selected = 0
+			}
+		} else if evt.EvKey == goncurses.KEY_UP {
+			if self.selected > 0 {
+				self.selected = self.selected - 1
+			}
+		} else if evt.EvKey == goncurses.KEY_DOWN {
+			var itemCount int = len(self.dir)
+			if self.selected < itemCount {
+				self.selected = self.selected + 1
+			}
+		}
 	}
 }
 
@@ -276,9 +344,24 @@ func (self *PanelWidget) displayMiniInfo() {
 		mainTerm.ColorOn(normalColorIndex)
 		mainTerm.DrawHLine(self.Y+posY, self.X+1, ' ', self.Cols-2)
 		mainTerm.ColorOff(normalColorIndex)
-		/* Link source */
-		/* Dot directory */
-		/* File name */
+
+		entry := self.GetEntry(self.selected)
+		if entry != nil {
+			mainTerm.GotoYX(self.Y+posY, self.X+1)
+
+			/* Link source */
+			var summaryText string = ""
+			if entry.IsExecutable {
+				summaryText = "Marked as executable"
+			} else if entry.IsDirectory {
+				summaryText = "Marked as directory"
+			} else {
+				summaryText = entry.Name
+			}
+			mainTerm.ColorOn(normalColorIndex)
+			mainTerm.Print(summaryText)
+			mainTerm.ColorOff(normalColorIndex)
+		}
 	}
 }
 
@@ -318,5 +401,68 @@ func (self *PanelWidget) displayTotalMarkedSize(i int, i2 int, b bool) {
 }
 
 func (self *PanelWidget) repaintFile(itemIndex int, colorIndex skin.ColorPair, showStatus bool) {
+	self.formatFile(itemIndex)
+}
+
+func (self *PanelWidget) GetEntry(itemIndex int) *FileEntry {
+	for index, e := range self.dir {
+		if index == itemIndex {
+			return e
+		}
+	}
+	return nil
+}
+
+func (self *PanelWidget) formatFile(itemIndex int) {
+
+	mainTerm := ctx.GetTerm()
+	mainSkin := ctx.GetSkin()
+
+	normalColorIndex := mainSkin.GetColor("core", "_default_")
+	selectedColorIndex := mainSkin.GetColor("core", "selected")
+	if itemIndex == self.selected {
+		mainTerm.ColorOn(selectedColorIndex)
+	} else {
+		mainTerm.ColorOn(normalColorIndex)
+	}
+
+	/* Draw background */
+	mainTerm.DrawHLine(self.Y+2+itemIndex, self.X+1, ' ', self.Cols-2)
+
+	/* Ask entries */
+	entry := self.GetEntry(itemIndex + self.topFile)
+	if entry != nil {
+		var startX int = 1
+		var stopX int = 1
+		for _, f := range self.format {
+			/* Prepare position */
+			startX = stopX
+			stopX = startX + f.fieldLen - 1
+			/* Draw */
+			mainTerm.GotoYX(self.Y+2+itemIndex, self.X+startX)
+			if f.id == "name" {
+				newName := fmt.Sprintf("%s", entry.Name)
+				newName = strutil.FitToTerm(newName, uint(f.fieldLen), 0, false)
+				mainTerm.Print(newName)
+			} else if f.id == "size" {
+				size := humanize.Bytes(entry.Size)
+				size = strutil.FitToTerm(size, uint(f.fieldLen), 0, false)
+				mainTerm.Print(size)
+			} else if f.id == "mtime" {
+				modTime := util.FormatTime(entry.ModTime)
+				modTime = strutil.FitToTerm(modTime, uint(f.fieldLen), 0, false)
+				mainTerm.Print(modTime)
+			} else {
+				mainTerm.Print("?")
+			}
+		}
+
+	}
+
+	if itemIndex == self.selected {
+		mainTerm.ColorOff(selectedColorIndex)
+	} else {
+		mainTerm.ColorOff(normalColorIndex)
+	}
 
 }

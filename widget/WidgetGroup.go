@@ -1,6 +1,7 @@
 package widget
 
 import (
+	"github.com/vit1251/goncurses"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 )
@@ -23,29 +24,28 @@ func (self *WidgetGroup) RegisterWidget(widget IWidget) {
 	}
 }
 
-//func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
-//
-//	/* Process widget group actions */
-//	if evt.EvType == event.EventTypeKey {
-//		if evt.EvKey == goncurses.KEY_RETURN {
-//
-//		}
-//	}
-//
-//	/* Process every widget */
-//	for _, w := range self.widgets {
-//		w.ProcessEvent(evt)
-//	}
-//
-//}
+func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+
+	/* Process widget group actions */
+	if evt.EvType == event.EventTypeKey {
+		if evt.EvKey == goncurses.KEY_RETURN {
+
+		}
+		if evt.EvKey == goncurses.KEY_TAB {
+
+		}
+	}
+
+	/* Process every widget */
+	for _, w := range self.widgets {
+		w.ProcessEvent(evt)
+	}
+
+}
 
 func (self *WidgetGroup) Draw() {
 	for _, w := range self.widgets {
 		log.Printf("WidgetGroup: Draw: w = %#v", w)
 		w.Draw()
 	}
-}
-
-func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
-	// TODO - TAB is switch active module ...
 }

@@ -42,5 +42,5 @@ func (self *Widget) Draw() {
 }
 
 func (self *Widget) ProcessEvent(evt *event.Event) {
-	self.callback(MsgKey)
+	panic("not yet implemented")
 }

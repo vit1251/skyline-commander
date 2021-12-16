@@ -2,6 +2,7 @@ package widget
 
 import (
 	"github.com/vit1251/skyline-commander/ctx"
+	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 )
 
@@ -34,4 +35,8 @@ func (self *LabelWidget) Draw() {
 
 func (self *LabelWidget) SetTitle(title string) {
 	self.title = title
+}
+
+func (self *LabelWidget) ProcessEvent(evt *event.Event) {
+
 }

@@ -11,7 +11,7 @@ const (
 
 type Event struct {
 	EvType EventType
-	EvKey  uint
+	EvKey  goncurses.Key
 }
 
 func NewEvent() *Event {
@@ -28,7 +28,7 @@ func NewEventFromKey(key int) *Event {
 	} else {
 		evt = &Event{
 			EvType: EventTypeKey,
-			EvKey:  uint(key),
+			EvKey:  goncurses.Key(key),
 		}
 	}
 	return evt
