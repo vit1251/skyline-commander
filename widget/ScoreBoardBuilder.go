@@ -1,8 +1,9 @@
 package widget
 
 type ScoreBoardBuilder struct {
-	group     *WidgetGroup
+	mainMenu  *MenuWidget
 	buttonBar *ButtonBarWidget
+	widget    IWidget
 }
 
 func NewScoreBoardBuilder() *ScoreBoardBuilder {
@@ -11,14 +12,9 @@ func NewScoreBoardBuilder() *ScoreBoardBuilder {
 
 func (self *ScoreBoardBuilder) Build() *Scoreboard {
 	sb := NewScoreboard()
-	sb.SetWidgetGroup(self.group)
 	sb.SetButtonBar(self.buttonBar)
+	sb.SetWidget(self.widget)
 	return sb
-}
-
-func (self *ScoreBoardBuilder) WithWidgetGroup(group *WidgetGroup) *ScoreBoardBuilder {
-	self.group = group
-	return self
 }
 
 func (self *ScoreBoardBuilder) WithButtonBar(buttonBar *ButtonBarWidget) *ScoreBoardBuilder {
@@ -27,5 +23,10 @@ func (self *ScoreBoardBuilder) WithButtonBar(buttonBar *ButtonBarWidget) *ScoreB
 }
 
 func (self *ScoreBoardBuilder) WithMainMenu(menu *MenuWidget) *ScoreBoardBuilder {
+	return self
+}
+
+func (self *ScoreBoardBuilder) WithWidget(widget IWidget) *ScoreBoardBuilder {
+	self.widget = widget
 	return self
 }

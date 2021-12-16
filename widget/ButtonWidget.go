@@ -20,19 +20,7 @@ func NewButtonWidget() *ButtonWidget {
 	return bw
 }
 
-func ProcessInput() {
-
-	//        match ch {
-	//            '\n' => {
-	//                self.invoke();
-	//            },
-	//            _ => {
-	//            }
-	//        };
-
-}
-
-func (self *ButtonWidget) Render() {
+func (self *ButtonWidget) Draw() {
 
 	//        // Step 1. Select color
 	//        if self.focused {
@@ -48,15 +36,6 @@ func (self *ButtonWidget) Render() {
 
 }
 
-//    pub fn set_pos(&mut self, x: u16, y: u16) {
-//        self.x = x;
-//        self.y = y;
-//    }
-
-//    pub fn set_title(&mut self, title: &str) {
-//        self.title = String::from(title);
-//    }
-
-//    pub fn set_color(&mut self, color: &'a dyn termion::color::Color) {
-//        self.color = color;
-//    }
+func (self *ButtonWidget) SetTitle(title string) {
+	self.title = title
+}

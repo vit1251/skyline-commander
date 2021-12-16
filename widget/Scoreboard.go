@@ -1,25 +1,27 @@
 package widget
 
+import (
+	"github.com/vit1251/skyline-commander/tty/event"
+)
+
 type Scoreboard struct {
 	IScoreboard
 	menu      *MenuWidget
 	buttonBar *ButtonBarWidget
-	groups    []*WidgetGroup
+	widget    IWidget
 }
 
 func (self *Scoreboard) Draw() {
 
-	/* Step 0. Render widget groups */
-	for _, group := range self.groups {
-		group.Draw()
-	}
+	/* Step 1. Render main widget */
+	self.widget.Draw()
 
-	/* Step 1. Render menu */
+	/* Step 2. Render menu */
 	if self.menu != nil {
 		self.menu.Draw()
 	}
 
-	/* Step 2. Render button bar */
+	/* Step 3. Render button bar */
 	if self.buttonBar != nil {
 		self.buttonBar.Draw()
 	}
@@ -30,24 +32,14 @@ func NewScoreboard() *Scoreboard {
 	return new(Scoreboard)
 }
 
-func (self *Scoreboard) SetWidgetGroup(group *WidgetGroup) {
-	self.groups = append(self.groups, group)
-}
-
 func (self *Scoreboard) SetButtonBar(bar *ButtonBarWidget) {
 	self.buttonBar = bar
 }
 
-//func (self *Scoreboard) ProcessEvent(evt *event.Event) {
-//
-//	/* Process menu on active */
-//	//if self.menu != nil {
-//	//	self.menu.ProcessEvent(evt)
-//	//}
-//
-//	/* Process group widget */
-//	for _, group := range self.groups {
-//		group.ProcessEvent(evt)
-//	}
-//
-//}
+func (self *Scoreboard) SetWidget(widget IWidget) {
+	self.widget = widget
+}
+
+func (self *Scoreboard) ProcessEvent(evt *event.Event) {
+	self.widget.ProcessEvent(evt)
+}

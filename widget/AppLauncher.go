@@ -57,7 +57,7 @@ func (self *AppLauncher) ProcessEvent(evt *event.Event) {
 	}
 
 	if self.scoreBoard != nil {
-		//		self.scoreBoard.ProcessEvent(evt)
+		self.scoreBoard.ProcessEvent(evt)
 	} else {
 		self.running = false
 	}
@@ -76,6 +76,7 @@ func (self *AppLauncher) makeDefaultSkin(pTerm *tty.PTerm) *skin.Skin {
 	s.Register("core", "gauge", pTerm.InitColor("white", "black"))
 	s.Register("core", "input", pTerm.InitColor("black", "cyan"))
 	s.Register("core", "reverse", pTerm.InitColor("black", "lightgray"))
+	s.Register("core", "header", pTerm.InitColor("yellow", "blue"))
 
 	/* Button bar */
 	s.Register("buttonbar", "hotkey", pTerm.InitColor("white", "black"))
@@ -109,7 +110,7 @@ func (self *AppLauncher) Run() {
 
 		/* Render scoreboard */
 		if self.updateReady {
-			pTerm.Touch()
+			pTerm.Erase()
 			self.scoreBoard.Draw()
 			pTerm.Refresh()
 			log.Printf("Update: err = %v", goncurses.Update())

@@ -28,10 +28,6 @@ func (self *PTerm) Init() error {
 	sigs := make(chan os.Signal, 1)
 	signal.Notify(sigs, syscall.SIGWINCH)
 
-	/* Disable GetText encoding */
-	//res := SetLocale.SetLocale(SetLocale.LC_ALL, "")
-	//log.Printf("SetLocale: res = %+v", res)
-
 	log.Printf("Initialize ncurses: version = %s", goncurses.CursesVersion())
 
 	stdscr, err1 := goncurses.Init()

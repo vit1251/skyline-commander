@@ -18,14 +18,14 @@ func CreatePanel(mainWidgetGroup *widget.WidgetGroup) {
 
 	/* Left panel */
 	leftPanel := NewPanelWidget()
-	leftPanel.SetPos(0, 0)
+	leftPanel.SetYX(0, 0)
 	leftPanel.Lines = maxY - 2
 	leftPanel.Cols = panelWidth
 	mainWidgetGroup.RegisterWidget(leftPanel)
 
 	/* Right panel */
 	rightPanel := NewPanelWidget()
-	rightPanel.SetPos(0, maxX/2)
+	rightPanel.SetYX(0, maxX/2)
 	rightPanel.Lines = maxY - 2
 	rightPanel.Cols = panelWidth + panelWidthMod
 	mainWidgetGroup.RegisterWidget(rightPanel)

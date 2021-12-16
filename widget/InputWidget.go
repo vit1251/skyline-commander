@@ -3,7 +3,7 @@ package widget
 import (
 	"fmt"
 	"github.com/vit1251/goncurses"
-	"github.com/vit1251/skyline-commander/tty"
+	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/tty/event"
 	"unicode/utf8"
 )
@@ -39,7 +39,9 @@ func (self *InputWidget) ProcessEvent(evt *event.Event) {
 	}
 }
 
-func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
+func (self *InputWidget) Draw() {
+
+	pTerm := ctx.GetTerm()
 
 	/* Step 1. Select color */
 	//        if self.focused {
@@ -49,7 +51,7 @@ func (self *InputWidget) Render(pTerm *tty.PTerm, area *Rect) {
 	//        }
 
 	/* Step 2. Set position */
-	pTerm.Move(self.Y, self.X)
+	self.Widget.GotoYX(0, 0)
 
 	/* Step 3. Draw input */
 	var out string = fmt.Sprintf("%s", self.value)
@@ -94,10 +96,6 @@ func (self *InputWidget) SetPlaceholder(placeholder string) {
 //        self.color = color;
 //    }
 
-//    pub fn set_width(&mut self, width: u16) {
-//        self.width = width;
-//    }
-
 //    pub fn set_point(&mut self, point: u16) {
 //        self.point = point;
 //    }
@@ -112,5 +110,15 @@ func (self *InputWidget) IsEmpty() bool {
 
 func (self *InputWidget) SetCallback(callback func(string)) *InputWidget {
 	self.callback = callback
+	return self
+}
+
+func (self *InputWidget) SetWidth(width int) *InputWidget {
+	self.width = width
+	return self
+}
+
+func (self *InputWidget) SetValue(value string) *InputWidget {
+	self.value = value
 	return self
 }

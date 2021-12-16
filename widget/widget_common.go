@@ -2,6 +2,7 @@ package widget
 
 import (
 	"github.com/vit1251/skyline-commander/ctx"
+	"github.com/vit1251/skyline-commander/tty/event"
 	"log"
 )
 
@@ -14,7 +15,7 @@ type Widget struct {
 	callback func(msg WidgetMsg)
 }
 
-func (self *Widget) SetPos(y int, x int) {
+func (self *Widget) SetYX(y int, x int) {
 	self.Y = y
 	self.X = x
 }
@@ -37,9 +38,9 @@ func (self *Widget) GotoYX(y int, x int) {
 }
 
 func (self *Widget) Draw() {
-	if self.callback != nil {
-		self.callback(MsgDraw)
-	} else {
-		log.Printf("Widget: no Draw callback is defined.")
-	}
+	panic("not yet implemented")
+}
+
+func (self *Widget) ProcessEvent(evt *event.Event) {
+	self.callback(MsgKey)
 }

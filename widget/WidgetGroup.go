@@ -1,5 +1,10 @@
 package widget
 
+import (
+	"github.com/vit1251/skyline-commander/tty/event"
+	"log"
+)
+
 type WidgetGroup struct {
 	IWidget
 	widgets []IWidget
@@ -36,6 +41,11 @@ func (self *WidgetGroup) RegisterWidget(widget IWidget) {
 
 func (self *WidgetGroup) Draw() {
 	for _, w := range self.widgets {
+		log.Printf("WidgetGroup: Draw: w = %#v", w)
 		w.Draw()
 	}
+}
+
+func (self *WidgetGroup) ProcessEvent(evt *event.Event) {
+	// TODO - TAB is switch active module ...
 }

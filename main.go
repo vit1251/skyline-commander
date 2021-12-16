@@ -1,11 +1,13 @@
 package main
 
 import (
+	"github.com/vit1251/skyline-commander/ctx"
 	"github.com/vit1251/skyline-commander/filemanager"
 	"github.com/vit1251/skyline-commander/widget"
 	"io"
 	"log"
 	"os"
+	"runtime"
 )
 
 type BoardType int
@@ -23,19 +25,32 @@ const (
 
 func createPanelBoard() *widget.Scoreboard {
 
+	mainTerm := ctx.GetTerm()
+	maxY, maxX := mainTerm.MaxYX()
+
 	mainWidgetGroup := widget.NewWidgetGroup()
 
+	/* Create filemanager panel */
 	filemanager.CreatePanel(mainWidgetGroup)
 
-	/* Input panel */
-	mainInput := widget.NewInputWidget()
-	mainInput.SetCallback(func(value string) {
+	/* Execute input group */
+	execWidgetGroup := widget.NewWidgetGroup()
+	execPrompt := widget.NewLabelWidget()
+	execPrompt.SetYX(maxY-2, 0)
+	execPrompt.SetTitle("$ ")
+	execWidgetGroup.RegisterWidget(execPrompt)
+
+	execInput := widget.NewInputWidget()
+	execInput.SetValue("touch debug.log")
+	execInput.SetCallback(func(value string) {
 		log.Printf("Execute shell operation: %q", value)
 	})
-	mainInput.SetPos(10, 0)
-	mainWidgetGroup.RegisterWidget(mainInput)
+	execInput.SetYX(maxY-2, 3)
+	execInput.SetWidth(maxX - 3)
+	execWidgetGroup.RegisterWidget(execInput)
+	mainWidgetGroup.RegisterWidget(execWidgetGroup)
 
-	/**/
+	/* Create hotkey bar */
 	mainBar := widget.NewButtonBarWidget()
 	mainBar.SetLabel(1, "Help")
 	mainBar.SetLabel(2, "Menu")
@@ -52,7 +67,7 @@ func createPanelBoard() *widget.Scoreboard {
 
 	/* Create main Scoreboard */
 	mainBoard := widget.NewScoreBoardBuilder().
-		WithWidgetGroup(mainWidgetGroup).
+		WithWidget(mainWidgetGroup).
 		WithButtonBar(mainBar).
 		WithMainMenu(mainMenu).
 		Build()
@@ -85,6 +100,9 @@ func createQuitBoard() *widget.Scoreboard {
 }
 
 func main() {
+
+	/* Use one OS invoke source */
+	runtime.LockOSThread()
 
 	/* Setup debug output */
 	stream, err1 := os.Create("debug.log")
