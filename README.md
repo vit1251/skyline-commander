@@ -1,6 +1,6 @@
 # Skyline Commander
 
-![Снимок экрана 2021-12-16 в 23 05 24](https://user-images.githubusercontent.com/110534/146444786-b788c398-00ea-4000-a9e6-49d69c25d954.png)
+![Снимок экрана 2021-12-16 в 23 32 51](https://user-images.githubusercontent.com/110534/146445010-7ead6837-772f-4283-876b-fa9888aa6411.png)
 
 ## Requirements
 
