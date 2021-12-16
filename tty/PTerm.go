@@ -8,13 +8,16 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"runtime"
 	"syscall"
+	"time"
 )
 
 type PTerm struct {
-	running bool
-	stdscr  *goncurses.Window
-	C       chan event.Event
+	running bool              /* Main event processing marker   */
+	stdscr  *goncurses.Window /* Use libncursesw C binding      */
+	C       chan event.Event  /* Channel with event             */
+	resized bool              /* Resize marker                  */
 }
 
 func NewPTerm() *PTerm {
@@ -48,8 +51,6 @@ func (self *PTerm) Init() error {
 		return err3
 	}
 
-	stdscr.Timeout(100)
-
 	err4 := goncurses.StartColor()
 	if err4 != nil {
 		return err4
@@ -60,8 +61,42 @@ func (self *PTerm) Init() error {
 	self.running = true
 
 	go func() {
+		for self.running {
+			select {
+			case <-sigs:
+				self.resized = true
+			}
+		}
+	}()
+
+	resize := make(chan bool, 1)
+	go func() {
+		for self.running {
+			time.Sleep(500 * time.Millisecond)
+			if self.resized {
+				resize <- true
+				self.resized = false
+			}
+		}
+		close(resize)
+	}()
+
+	go func() {
+
+		runtime.LockOSThread()
+
+		/* Set timeout */
+		stdscr.Timeout(100)
 
 		for self.running {
+
+			/* Wait input */
+			startWait := time.Now()
+			log.Printf("waitInput in.")
+			waitInput()
+			log.Printf("waitInput is out.")
+			log.Printf("waitInput is %q msec.", time.Since(startWait))
+
 			/* Process input */
 			var key goncurses.Key = stdscr.GetChar()
 			if key != 0 {
@@ -76,9 +111,12 @@ func (self *PTerm) Init() error {
 	self.C = make(chan event.Event)
 
 	go func() {
+
+		runtime.LockOSThread()
+
 		for self.running {
 			select {
-			case <-sigs:
+			case <-resize:
 				log.Printf("Linux console resize event")
 				self.updateTermSize()
 				evt := event.NewEvent()
