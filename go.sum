@@ -8,5 +8,7 @@ github.com/vit1251/goncurses v0.0.0-20211216031409-1f7188e429ac h1:rdqzNBOl4TL1Z
 github.com/vit1251/goncurses v0.0.0-20211216031409-1f7188e429ac/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
 github.com/vit1251/goncurses v0.0.0-20211216034040-245d690f6bbb h1:8FYYRN7POMQZQnSDELRe8UIpfle5v+aXuTSPO3YUC7k=
 github.com/vit1251/goncurses v0.0.0-20211216034040-245d690f6bbb/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
+github.com/vit1251/goncurses v0.0.0-20211216105603-2c17631c57f2 h1:eSp9uS5jxidqlQGoAfds+1rrODpR+wEi1SjvVGqAYHo=
+github.com/vit1251/goncurses v0.0.0-20211216105603-2c17631c57f2/go.mod h1:IN/YFFz2UNaYGLEH0avbZXbYmBcYUbq7uYk8xUUVBAI=
 golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e h1:fLOSk5Q00efkSvAm+4xcoXD+RRmLmmulPn5I3Y9F2EM=
 golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
