@@ -1,6 +1,6 @@
 module github.com/vit1251/skyline-commander
 
-go 1.17
+go 1.14
 
 require (
 	github.com/dustin/go-humanize v1.0.0

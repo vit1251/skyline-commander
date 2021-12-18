@@ -42,6 +42,7 @@ func (self *PTerm) Init() error {
 	ncursesw.CBreak(true)
 	ncursesw.Raw(true)
 	ncursesw.Echo(false)
+	//ncursesw.
 	err2 := ncursesw.Cursor(0)
 	if err2 != nil {
 		return err2
@@ -55,8 +56,6 @@ func (self *PTerm) Init() error {
 	if err4 != nil {
 		return err4
 	}
-
-	console := make(chan int, 1)
 
 	self.running = true
 
@@ -72,7 +71,7 @@ func (self *PTerm) Init() error {
 	resize := make(chan bool, 1)
 	go func() {
 		for self.running {
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(150 * time.Millisecond)
 			if self.resized {
 				resize <- true
 				self.resized = false
@@ -81,35 +80,18 @@ func (self *PTerm) Init() error {
 		close(resize)
 	}()
 
+	console := make(chan bool, 1)
 	go func() {
-
 		runtime.LockOSThread()
-
-		/* Set timeout */
-		stdscr.Timeout(100)
-
 		for self.running {
-
-			/* Wait input */
-			startWait := time.Now()
-			log.Printf("waitInput in.")
 			waitInput()
-			log.Printf("waitInput is out.")
-			log.Printf("waitInput is %q msec.", time.Since(startWait))
-
-			/* Process input */
-			var key ncursesw.Key = stdscr.GetChar()
-			if key != 0 {
-				console <- int(key)
-			}
+			console <- true
 		}
-
 		close(console)
-
 	}()
 
 	self.C = make(chan event.Event)
-
+	stdscr.Timeout(100)
 	go func() {
 
 		runtime.LockOSThread()
@@ -117,17 +99,22 @@ func (self *PTerm) Init() error {
 		for self.running {
 			select {
 			case <-resize:
-				log.Printf("Linux console resize event")
+				log.Printf("event: resize")
 				self.updateTermSize()
 				evt := event.NewEvent()
 				evt.EvType = event.EventTypeResize
+				log.Printf("event: evt = %+v", evt)
 				self.C <- *evt
-			case key := <-console:
-				log.Printf("Console event: ch = %d", key)
-				evt := event.NewEventFromKey(key)
-				log.Printf("Event: evt = %+v", evt)
-				self.C <- *evt
-				// TODO - mouse ...
+			case <-console:
+				var key ncursesw.Key = stdscr.GetChar()
+				log.Printf("event: console: key = %d name = %s RESIZE = %d", key, ncursesw.KeyString(key), int(ncursesw.KEY_RESIZE))
+				if key != 0 && key != ncursesw.KEY_RESIZE && key != ncursesw.KEY_MOUSE {
+					log.Printf("event: console: processing: key = %d", key)
+					evt := event.NewEventFromKey(key)
+					log.Printf("event: evt = %+v", evt)
+					self.C <- *evt
+					// TODO - mouse ...
+				}
 			}
 		}
 	}()

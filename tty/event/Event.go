@@ -21,7 +21,7 @@ func NewEvent() *Event {
 	return evt
 }
 
-func NewEventFromKey(key int) *Event {
+func NewEventFromKey(key ncursesw.Key) *Event {
 	var evt *Event
 	if key == ncursesw.KEY_RESIZE {
 		evt = &Event{
@@ -30,7 +30,7 @@ func NewEventFromKey(key int) *Event {
 	} else {
 		evt = &Event{
 			EvType: EventTypeKey,
-			EvKey:  ncursesw.Key(key),
+			EvKey:  key,
 		}
 	}
 	return evt
