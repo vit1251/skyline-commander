@@ -1,5 +1,7 @@
 # Skyline Commander
 
+![Снимок экрана 2021-12-16 в 23 32 51](https://user-images.githubusercontent.com/110534/146445010-7ead6837-772f-4283-876b-fa9888aa6411.png)
+
 ## Requirements
 
   * Golang
